@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
     
@@ -36,7 +37,7 @@ public class UserController {
 
     private final UserRequestDtoValidator userRequestDtoValidator;
 
-    @PostMapping("/{id}")
+    @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<UserResponseDto> getUser(@PathVariable final String id) {
         final User user = this.userService.findUser(Long.parseLong(id));

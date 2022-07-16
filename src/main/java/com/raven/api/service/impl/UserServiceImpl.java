@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         if (roleOptional.isEmpty()) {
             throw new EntryNotFoundException(this.accessor.getMessage("user.roleName.notValid", new Object[]{roleName}));
         }
-
+        System.out.println(roleOptional);
         user.getRoles().add(roleOptional.get());
 
         return user;

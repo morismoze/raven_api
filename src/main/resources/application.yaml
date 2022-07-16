@@ -1,15 +1,19 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/raven_db
-    username: raven
-    password: raven
+    username: postgres
+    password: admin
   jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format-sql: true
+    hibernate:
+      ddl-auto: create-drop
     show-sql: true
+    generate-ddl: false
+  messages:
+    basename: messages
 
 server:
   error:
     include-message: always
+  port: 8080
+  servlet:
+    context-path: /api

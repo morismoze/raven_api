@@ -7,11 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class UserRequestDto {
     
     @NotNull
@@ -25,6 +27,10 @@ public class UserRequestDto {
     @NotNull
     @Size(max = 255)
     private String email;
+
+    @NotNull
+    @Size(max = 255)
+    private String username;
 
     @NotNull
     @Size(max = 60)
