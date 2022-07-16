@@ -2,6 +2,8 @@ package com.raven.api.response;
 
 import java.util.List;
 
+import com.raven.api.model.Role;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +27,6 @@ public class UserResponseDto {
 
     private String username;
 
-    private List<String> roleNames;
+    private List<Role> roles;
 
 }

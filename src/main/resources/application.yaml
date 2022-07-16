@@ -4,10 +4,16 @@ spring:
     username: postgres
     password: admin
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
-    generate-ddl: false
+  sql:
+    init:
+      mode: always
+      data-locations:
+        - classpath:data.sql
   messages:
     basename: messages
 
