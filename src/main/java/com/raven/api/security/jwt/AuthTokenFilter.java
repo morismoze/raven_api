@@ -19,10 +19,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.raven.api.request.UserRequestDto;
 
 public class AuthTokenFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -34,19 +36,20 @@ public class AuthTokenFilter extends UsernamePasswordAuthenticationFilter {
     
     @Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-			throws AuthenticationException {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-	
+			throws AuthenticationException {	
 		try {
-			System.out.println(request.getReader().lines().collect(Collectors.joining()));
+			ObjectMapper mapper = new ObjectMapper();
+			UserRequestDto userRequestDto = mapper.readValue(request.getInputStream(), UserRequestDto.class);
+			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+				userRequestDto.getUsername(), userRequestDto.getPassword()
+			);
+
+			return this.authenticationManager.authenticate(authToken);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
 
-		return this.authenticationManager.authenticate(authToken);
+		return null;
     }
 
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
