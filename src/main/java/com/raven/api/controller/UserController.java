@@ -63,4 +63,12 @@ public class UserController {
         return ResponseEntity.created(uri).body(userResponseDto);
     }
 
+    @GetMapping("/current")
+    public ResponseEntity<UserResponseDto> getCurrentUser() {
+        final User user = userService.findCurrent();
+        final UserResponseDto userResponseDto = this.userMapper.userToUserResponseDto(user);
+
+        return ResponseEntity.ok().body(userResponseDto);
+    }
+
 }

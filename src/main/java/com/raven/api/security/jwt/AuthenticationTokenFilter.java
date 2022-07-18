@@ -19,18 +19,17 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.raven.api.request.UserRequestDto;
 
-public class AuthTokenFilter extends UsernamePasswordAuthenticationFilter {
+public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFilter {
 
 	private final AuthenticationManager authenticationManager;
 
-    public AuthTokenFilter(AuthenticationManager authenticationManager) {
+    public AuthenticationTokenFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
     

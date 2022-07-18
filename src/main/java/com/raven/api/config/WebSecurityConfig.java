@@ -12,8 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.raven.api.security.jwt.AuthTokenFilter;
+import com.raven.api.security.jwt.AuthenticationTokenFilter;
+import com.raven.api.security.jwt.AuthorizationTokenFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -35,7 +37,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests().antMatchers("/user/create", "/login").permitAll()
             .anyRequest().authenticated();
-        http.addFilter(new AuthTokenFilter(authenticationManagerBean()));
+        http.addFilter(new AuthenticationTokenFilter(authenticationManagerBean()));
+        http.addFilterBefore(new AuthorizationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

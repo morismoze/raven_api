@@ -1,15 +1,18 @@
 package com.raven.api.service.impl;
 
 import com.raven.api.exception.EntryNotFoundException;
+import com.raven.api.exception.NotLoggedInException;
 import com.raven.api.model.Role;
 import com.raven.api.model.User;
 import com.raven.api.model.enums.RoleName;
 import com.raven.api.repository.RoleRepository;
 import com.raven.api.repository.UserRepository;
+import com.raven.api.security.jwt.AuthUtils;
 import com.raven.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +87,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findCurrent() {
-        return null;
+        final Optional<String> username = AuthUtils.getCurrentUserUsername();
+        
+        if (username.isEmpty()) {
+            throw new NotLoggedInException(accessor.getMessage("noLogin"));
+        }
+
+        return findUserByUsername(username.get());
     }
 
     @Override
