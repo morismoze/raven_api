@@ -4,6 +4,9 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
@@ -69,6 +72,11 @@ public class UserController {
         final UserResponseDto userResponseDto = this.userMapper.userToUserResponseDto(user);
 
         return ResponseEntity.ok().body(userResponseDto);
+    }
+
+    @GetMapping("/token/refresh")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        this.userService.refreshToken(request, response);
     }
 
 }

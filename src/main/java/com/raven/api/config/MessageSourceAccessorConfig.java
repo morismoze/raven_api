@@ -6,7 +6,7 @@ import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 @Configuration
-public class ApplicationConfig {
+public class MessageSourceAccessorConfig {
     
     @Bean
     public MessageSourceAccessor messageSourceAccessor() {

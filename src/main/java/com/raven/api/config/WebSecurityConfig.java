@@ -2,6 +2,7 @@ package com.raven.api.config;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +25,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
 
-    private final PasswordEncoder passwordEncoder; 
+    private final PasswordEncoder passwordEncoder;
+
+    @Value(value = "${jwt.secret}")
+	private String secret;
+
+	@Value(value = "${jwt.claim}")
+	private String claim;
+
+	@Value(value = "${jwt.access-token-expiration-time-millis}")
+	private Long accessTokenExpirationTimeMillis;
+
+	@Value(value = "${jwt.refresh-token-expiration-time-millis}")
+	private Long refreshTokenExpirationTimeMillis;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -35,10 +48,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests().antMatchers("/user/create", "/login").permitAll()
+            .authorizeRequests().antMatchers("/user/create", "/login", "user/token/refresh").permitAll()
             .anyRequest().authenticated();
-        http.addFilter(new AuthenticationTokenFilter(authenticationManagerBean()));
-        http.addFilterBefore(new AuthorizationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilter(new AuthenticationTokenFilter(
+            authenticationManagerBean(), this.secret, this.claim, this.accessTokenExpirationTimeMillis, this.refreshTokenExpirationTimeMillis));
+        http.addFilterBefore(new AuthorizationTokenFilter(this.secret, this.claim), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

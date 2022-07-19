@@ -1,6 +1,7 @@
 package com.raven.api.exception;
 
 public class NotLoggedInException extends RuntimeException {
+
     public NotLoggedInException() {
     }
 
@@ -19,4 +20,5 @@ public class NotLoggedInException extends RuntimeException {
     public NotLoggedInException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
+    
 }

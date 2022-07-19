@@ -24,12 +24,21 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class AuthorizationTokenFilter extends OncePerRequestFilter {
 
+	private String secret;
+
+	private String claim;
+
     private final String TOKEN_TYPE = "Bearer ";
+
+    public AuthorizationTokenFilter(String secret, String claim) {
+        this.secret = secret;
+        this.claim = claim;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        if (request.getServletPath().equals("/api/login")) {
+        if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/user/token/refresh")) {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -37,11 +46,11 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
             if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_TYPE)) {
                 try {
                     String token = authorizationHeader.substring(TOKEN_TYPE.length());
-                    Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                    Algorithm algorithm = Algorithm.HMAC256(this.secret.getBytes());
                     JWTVerifier verifier = JWT.require(algorithm).build();
                     DecodedJWT decodedJWT = verifier.verify(token);
                     String username = decodedJWT.getSubject();
-                    String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+                    String[] roles = decodedJWT.getClaim(this.claim).asArray(String.class);
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
                     stream(roles).forEach(role -> {
                         authorities.add(new SimpleGrantedAuthority(role));
@@ -57,7 +66,6 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             }
         }
-        
     }
     
 }
