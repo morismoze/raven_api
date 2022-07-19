@@ -56,12 +56,9 @@ public class UserRequestDtoValidator implements Validator {
                 errors.rejectValue(EMAIL, accessor.getMessage("user.email.notValid"));
             try {
                 userService.findUserByEmail(user.getEmail());
-                
-                // if exception was thrown, won't add to errors
-                
                 errors.rejectValue(EMAIL, accessor.getMessage("user.email.exists"));
             } catch (EntryNotFoundException e) {
-                // Email doesn't exist
+                // if exception was thrown - email doesn-t exist - won't add to errors
             }
         }
     }

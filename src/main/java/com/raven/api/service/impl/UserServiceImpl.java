@@ -18,11 +18,10 @@ import com.raven.api.security.jwt.AuthUtils;
 import com.raven.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -136,7 +135,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
             if (authorizationHeader != null && authorizationHeader.startsWith(this.TOKEN_TYPE)) {
                 try {
@@ -163,7 +162,7 @@ public class UserServiceImpl implements UserService {
                     e.printStackTrace();
                 } catch (JWTVerificationException e) {
                     try {
-                        response.sendError(FORBIDDEN.value());
+                        response.sendError(HttpStatus.FORBIDDEN.value());
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
