@@ -11,11 +11,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -23,7 +23,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.raven.api.exception.UnauthorizedException;
 import com.raven.api.request.UserRequestDto;
+import com.raven.api.response.Response;
 
 import lombok.AllArgsConstructor;
 
@@ -39,10 +41,11 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 	private Long accessTokenExpirationTimeMillis;
 
 	private Long refreshTokenExpirationTimeMillis;
+
+	private MessageSourceAccessor accessor;
     
     @Override
-	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-			throws AuthenticationException {
+	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			UserRequestDto userRequestDto = mapper.readValue(request.getInputStream(), UserRequestDto.class);
@@ -52,10 +55,8 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 
 			return this.authenticationManager.authenticate(authToken);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new UnauthorizedException(this.accessor.getMessage("user.notAuthorized"));
 		}
-
-		return null;
     }
 
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
@@ -79,7 +80,8 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 		tokens.put("access_token", accessToken);
 		tokens.put("refresh_token", refreshToken);
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+		Response<Map<String, String>> responseBuild = Response.build(tokens);
+		new ObjectMapper().writeValue(response.getOutputStream(), responseBuild);
 	}
     
 }

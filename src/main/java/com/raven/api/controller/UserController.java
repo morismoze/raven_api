@@ -1,8 +1,6 @@
 package com.raven.api.controller;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +46,7 @@ public class UserController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<Response<?>> getUser(@PathVariable final String id) {
         final User user = this.userService.findUser(Long.parseLong(id));
-        UserResponseDto userResponseDto = this.userMapper.userToUserResponseDto(user);
+        final UserResponseDto userResponseDto = this.userMapper.userToUserResponseDto(user);
 
         return ResponseEntity.ok().body(Response.build(userResponseDto));
     }
@@ -64,8 +61,8 @@ public class UserController {
         
         final User newUser = this.userMapper.userRequestDtoToUser(userRequestDto);
         final User createdUser = this.userService.createUser(newUser, RoleName.getDefault());
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/create").toUriString());
-        UserResponseDto userResponseDto = this.userMapper.userToUserResponseDto(createdUser);
+        final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/create").toUriString());
+        final UserResponseDto userResponseDto = this.userMapper.userToUserResponseDto(createdUser);
 
         return ResponseEntity.created(uri).body(Response.build(userResponseDto));
     }
@@ -77,7 +74,7 @@ public class UserController {
         try {
             user = this.userService.findCurrent();
         } catch (EntryNotFoundException | NotLoggedInException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Response.build(e.getMessage(), true));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Response.build(e.getMessage(), true));
         }
 
         final UserResponseDto userResponseDto = this.userMapper.userToUserResponseDto(user);

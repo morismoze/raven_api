@@ -3,6 +3,7 @@ package com.raven.api.service.impl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -152,7 +153,6 @@ public class UserServiceImpl implements UserService {
                         .withClaim(this.claim, user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toList()))
                         .sign(algorithm);
 
-
                     Map<String, String> tokens = new HashMap<>();
                     tokens.put("access_token", accessToken);
                     tokens.put("refresh_token", refreshToken);
@@ -160,13 +160,19 @@ public class UserServiceImpl implements UserService {
                     new ObjectMapper().writeValue(response.getOutputStream(), tokens);
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (JWTCreationException e) {
+                    e.printStackTrace();
                 } catch (JWTVerificationException e) {
+                    e.printStackTrace();
                     try {
-                        response.sendError(HttpStatus.FORBIDDEN.value());
+                        response.sendError(HttpStatus.UNAUTHORIZED.value());
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
                 }
+                
             } else {
                 throw new MissingTokenException("Missing authorization header or refresh token.");
             }        

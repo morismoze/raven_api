@@ -10,38 +10,41 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+@Component
 public class AuthorizationTokenFilter extends OncePerRequestFilter {
 
+	@Value(value = "${jwt.secret}")
 	private String secret;
 
+	@Value(value = "${jwt.claim}")
 	private String claim;
 
     private final String TOKEN_TYPE = "Bearer ";
 
-    public AuthorizationTokenFilter(String secret, String claim) {
-        this.secret = secret;
-        this.claim = claim;
-    }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/user/token/refresh")) {
+        if (request.getServletPath().equals("/login") 
+            || request.getServletPath().equals("/user/token/refresh")
+            || request.getServletPath().equals("/user/create")) {
             filterChain.doFilter(request, response);
         } else {
-            String authorizationHeader = request.getHeader(AUTHORIZATION);
+            String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
             if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_TYPE)) {
                 try {
@@ -58,9 +61,11 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     filterChain.doFilter(request, response);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     e.printStackTrace();
-                    response.sendError(HttpStatus.FORBIDDEN.value());
+                } catch (JWTVerificationException e) {
+                    e.printStackTrace();
+                    response.sendError(HttpStatus.UNAUTHORIZED.value());
                 }
             } else {
                 filterChain.doFilter(request, response);
