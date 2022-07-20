@@ -26,6 +26,5 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         Response<Integer> responseBuild = Response.build(UNAUTHORIZED);
         new ObjectMapper().writeValue(response.getOutputStream(), responseBuild);
-        System.out.println(authException.getClass());
     }
 }

@@ -16,10 +16,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.raven.api.security.AuthFailureHandler;
 import com.raven.api.security.jwt.AuthEntryPoint;
 import com.raven.api.security.jwt.AuthenticationTokenFilter;
 import com.raven.api.security.jwt.AuthorizationTokenFilter;
+import com.raven.api.service.UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +28,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
 
+    private final UserService userService;
+
     private final PasswordEncoder passwordEncoder;
 
     private final MessageSourceAccessor accessor;
@@ -35,8 +37,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthEntryPoint authEntryPoint;
 
     private final AuthorizationTokenFilter authorizationTokenFilter;
-
-    private final AuthFailureHandler authFailureHandler;
 
     @Value(value = "${jwt.secret}")
 	private String secret;
@@ -63,12 +63,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests().antMatchers("/user/create", "/login", "user/token/refresh").permitAll()
             .anyRequest().authenticated();
         http.addFilter(new AuthenticationTokenFilter(
-            authenticationManagerBean(), 
+            authenticationManagerBean(),
+            this.userService,
+            this.accessor,
             this.secret, 
             this.claim, 
             this.accessTokenExpirationTimeMillis, 
-            this.refreshTokenExpirationTimeMillis,
-            this.accessor));
+            this.refreshTokenExpirationTimeMillis));
         http.addFilterBefore(this.authorizationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 

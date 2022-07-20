@@ -17,15 +17,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.raven.api.exception.UnauthorizedException;
+import com.raven.api.model.User;
 import com.raven.api.request.UserRequestDto;
 import com.raven.api.response.Response;
+import com.raven.api.service.UserService;
 
 import lombok.AllArgsConstructor;
 
@@ -34,6 +35,10 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 
 	private AuthenticationManager authenticationManager;
 
+	private UserService userService;
+	
+	private MessageSourceAccessor accessor;
+    
 	private String secret;
 
 	private String claim;
@@ -42,8 +47,6 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 
 	private Long refreshTokenExpirationTimeMillis;
 
-	private MessageSourceAccessor accessor;
-    
     @Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -61,26 +64,28 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authentication) throws IOException, ServletException {
-		User user = (User) authentication.getPrincipal();
+		org.springframework.security.core.userdetails.User userPrincipal = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
 		Algorithm algorithm = Algorithm.HMAC256(this.secret.getBytes());
 		String accessToken = JWT.create()
-			.withSubject(user.getUsername())
+			.withSubject(userPrincipal.getUsername())
 			.withExpiresAt(new Date(this.accessTokenExpirationTimeMillis))
 			.withIssuer(request.getRequestURL().toString())
-			.withClaim(this.claim, user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+			.withClaim(this.claim, userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
 			.sign(algorithm);
 
 		String refreshToken = JWT.create()
-			.withSubject(user.getUsername())
+			.withSubject(userPrincipal.getUsername())
 			.withExpiresAt(new Date(this.refreshTokenExpirationTimeMillis))
 			.withIssuer(request.getRequestURL().toString())
 			.sign(algorithm);
 
-		Map<String, String> tokens = new HashMap<>();
-		tokens.put("access_token", accessToken);
-		tokens.put("refresh_token", refreshToken);
+		User user = this.userService.findUserByUsername(userPrincipal.getUsername());
+
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		Response<Map<String, String>> responseBuild = Response.build(tokens);
+		response.setHeader("access_token", accessToken);
+		response.setHeader("refresh_token", refreshToken);
+		Response<User> responseBuild = Response.build(user);
+
 		new ObjectMapper().writeValue(response.getOutputStream(), responseBuild);
 	}
     
