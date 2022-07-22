@@ -9,8 +9,8 @@ import com.raven.api.request.UserRequestDto;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    UserResponseDto userToUserResponseDto(User user);
+    UserResponseDto userUserResponseDtoMapper(User user);
 
-    User userRequestDtoToUser(UserRequestDto userRequestDto);
+    User userRequestDtoUserMapper(UserRequestDto userRequestDto);
     
 }

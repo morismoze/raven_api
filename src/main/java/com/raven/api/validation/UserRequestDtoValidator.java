@@ -22,6 +22,8 @@ public class UserRequestDtoValidator implements Validator {
 
     private static final String EMAIL = "email";
 
+    private static final String USERNAME = "username";
+
     private static final String FIRST_NAME = "firstName";
 
     private static final String LAST_NAME = "lastName";
@@ -47,18 +49,34 @@ public class UserRequestDtoValidator implements Validator {
         final UserRequestDto user = (UserRequestDto) target;
     
         checkEmail(user, errors);
+        checkUsername(user, errors);
     }
+    
     
     private void checkEmail(final UserRequestDto user, final Errors errors) {
         ValidationUtils.rejectIfEmpty(errors, EMAIL, accessor.getMessage("user.email.empty"));
-        if (user.getEmail() != null) {
-            if (!VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail()).find())
-                errors.rejectValue(EMAIL, accessor.getMessage("user.email.notValid"));
+        String email = user.getEmail();
+        if (email != null) {
+            if (!VALID_EMAIL_ADDRESS_REGEX.matcher(email).find())
+            errors.rejectValue(EMAIL, accessor.getMessage("user.email.notValid"));
             try {
-                userService.findUserByEmail(user.getEmail());
+                userService.findUserByEmail(email);
                 errors.rejectValue(EMAIL, accessor.getMessage("user.email.exists"));
             } catch (EntryNotFoundException e) {
-                // if exception was thrown - email doesn-t exist - won't add to errors
+                // if exception was thrown - email doesn't exist - won't add to errors
+            }
+        }
+    }
+    
+    private void checkUsername(final UserRequestDto user, final Errors errors) {
+        ValidationUtils.rejectIfEmpty(errors, EMAIL, accessor.getMessage("user.username.empty"));
+        String username = user.getUsername();
+        if (user.getUsername() != null) {
+            try {
+                userService.findUserByUsername(username);
+                errors.rejectValue(USERNAME, accessor.getMessage("user.username.exists"));
+            } catch (EntryNotFoundException e) {
+                // if exception was thrown - username doesn't exist - won't add to errors
             }
         }
     }

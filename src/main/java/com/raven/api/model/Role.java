@@ -8,9 +8,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "role")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Role {
 
     @Id
@@ -18,6 +18,12 @@ public class Role {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "name")
     private RoleName roleName;
+
+    public Role(final Long id, final RoleName roleName) {
+        this.id = id;
+        this.roleName = roleName;
+    }
 
 }

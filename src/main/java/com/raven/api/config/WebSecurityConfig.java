@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.raven.api.mapper.UserMapper;
 import com.raven.api.security.jwt.AuthEntryPoint;
 import com.raven.api.security.jwt.AuthenticationTokenFilter;
 import com.raven.api.security.jwt.AuthorizationTokenFilter;
@@ -29,6 +30,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
 
     private final UserService userService;
+
+    private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -59,12 +62,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
             .exceptionHandling().authenticationEntryPoint(this.authEntryPoint).and()
+            .formLogin().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests().antMatchers("/user/create", "/login", "user/token/refresh").permitAll()
             .anyRequest().authenticated();
         http.addFilter(new AuthenticationTokenFilter(
             authenticationManagerBean(),
             this.userService,
+            this.userMapper,
             this.accessor,
             this.secret, 
             this.claim, 

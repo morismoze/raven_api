@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    <changeSet id="20220721-00" author="mmoze" context="dev">
+        <!-- Inserted roles -->
+        <!-- <insert tableName="user">
+            <column name="id">1</column>
+            <column name="first_name">Moris</column>
+            <column name="last_name">Moze</column>
+            <column name="email">morismoze@gmail.com</column>
+            <column name="password">$2y$12$mygasxpK8nbau9Zo0Se/gu.4vOCI05e7JOuupWLFbqDu6fGJ6jwHG</column>
+            <column name="username">Rismo</column>
+        </insert> -->
+    </changeSet>
+</databaseChangeLog>

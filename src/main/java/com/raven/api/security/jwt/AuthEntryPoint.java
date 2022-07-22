@@ -21,10 +21,14 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
+        
+        System.out.println(authException.getMessage());
+
         int UNAUTHORIZED = HttpStatus.UNAUTHORIZED.value();
         response.setStatus(UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        Response<Integer> responseBuild = Response.build(UNAUTHORIZED);
+        Response<Integer> responseBuild = Response.build(String.valueOf(UNAUTHORIZED), true);
         new ObjectMapper().writeValue(response.getOutputStream(), responseBuild);
     }
+
 }

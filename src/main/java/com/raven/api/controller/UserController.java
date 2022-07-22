@@ -18,7 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.raven.api.service.UserService;
 import com.raven.api.validation.UserRequestDtoValidator;
 import com.raven.api.exception.EntryNotFoundException;
-import com.raven.api.exception.NotLoggedInException;
+import com.raven.api.exception.UnauthorizedException;
 import com.raven.api.mapper.UserMapper;
 import com.raven.api.model.User;
 import com.raven.api.model.enums.RoleName;
@@ -29,7 +29,6 @@ import com.raven.api.response.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 
 @RestController
 @RequestMapping("/user")
@@ -46,7 +45,7 @@ public class UserController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<Response<?>> getUser(@PathVariable final String id) {
         final User user = this.userService.findUser(Long.parseLong(id));
-        final UserResponseDto userResponseDto = this.userMapper.userToUserResponseDto(user);
+        final UserResponseDto userResponseDto = this.userMapper.userUserResponseDtoMapper(user);
 
         return ResponseEntity.ok().body(Response.build(userResponseDto));
     }
@@ -59,30 +58,28 @@ public class UserController {
             return ResponseEntity.badRequest().body(Response.build(errors));
         }
         
-        final User newUser = this.userMapper.userRequestDtoToUser(userRequestDto);
+        final User newUser = this.userMapper.userRequestDtoUserMapper(userRequestDto);
         final User createdUser = this.userService.createUser(newUser, RoleName.getDefault());
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/create").toUriString());
-        final UserResponseDto userResponseDto = this.userMapper.userToUserResponseDto(createdUser);
+        final UserResponseDto userResponseDto = this.userMapper.userUserResponseDtoMapper(createdUser);
 
         return ResponseEntity.created(uri).body(Response.build(userResponseDto));
     }
 
     @GetMapping("/current")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<Response<?>> getCurrentUser() {
         final User user;
         
-        try {
-            user = this.userService.findCurrent();
-        } catch (EntryNotFoundException | NotLoggedInException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Response.build(e.getMessage(), true));
-        }
+        user = this.userService.findCurrent();
 
-        final UserResponseDto userResponseDto = this.userMapper.userToUserResponseDto(user);
+        final UserResponseDto userResponseDto = this.userMapper.userUserResponseDtoMapper(user);
 
         return ResponseEntity.ok().body(Response.build(userResponseDto));
     }
 
     @GetMapping("/token/refresh")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
         this.userService.refreshToken(request, response);
     }

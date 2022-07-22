@@ -1,12 +1,12 @@
 plugins {
-	id 'org.springframework.boot' version '2.6.9'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+	id "org.springframework.boot" version "2.6.9"
+	id "io.spring.dependency-management" version "1.0.11.RELEASE"
+	id "java"
 }
 
-group = 'com.raven'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+group = "com.raven"
+version = "0.0.1-SNAPSHOT"
+sourceCompatibility = "11"
 
 configurations {
 	compileOnly {
@@ -20,26 +20,32 @@ repositories {
 
 ext {
     mapstructVersion = "1.5.2.Final"
-    projectLombokVersion = "1.18.24"
+    lombokVersion = "1.18.24"
+	javaxValidationVersion = "2.0.1.Final"
+	auth0JwtVersion = "4.0.0"
+	liquibaseVersion = "4.13.0"
+	jacksonDatatypeVersion = "2.3.0-rc1"
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+	implementation "org.springframework.boot:spring-boot-starter-security"
+	implementation "org.springframework.boot:spring-boot-starter-web"
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-    implementation "org.projectlombok:lombok:${projectLombokVersion}"
-	implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
-	implementation 'com.auth0:java-jwt:4.0.0'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'org.postgresql:postgresql'
+    implementation "org.projectlombok:lombok:${lombokVersion}"
+	implementation group: "javax.validation", name: "validation-api", version: "${javaxValidationVersion}"
+	implementation "com.auth0:java-jwt:${auth0JwtVersion}"
+	implementation group: "org.liquibase", name: "liquibase-core", version: "${liquibaseVersion}"
+	implementation group: "com.fasterxml.jackson.datatype", name: "jackson-datatype-jsr310", version: "${jacksonDatatypeVersion}"
+	developmentOnly "org.springframework.boot:spring-boot-devtools"
+	runtimeOnly "org.postgresql:postgresql"
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-    annotationProcessor "org.projectlombok:lombok:${projectLombokVersion}"
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	testImplementation "org.springframework.security:spring-security-test"
 }
 
-tasks.named('test') {
+tasks.named("test") {
 	useJUnitPlatform()
 }

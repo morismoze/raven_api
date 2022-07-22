@@ -2,8 +2,6 @@ package com.raven.api.security.jwt;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
@@ -14,18 +12,26 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.raven.api.exception.EntryNotFoundException;
+import com.raven.api.exception.ServerErrorException;
 import com.raven.api.exception.UnauthorizedException;
+import com.raven.api.mapper.UserMapper;
 import com.raven.api.model.User;
 import com.raven.api.request.UserRequestDto;
 import com.raven.api.response.Response;
+import com.raven.api.response.UserResponseDto;
 import com.raven.api.service.UserService;
 
 import lombok.AllArgsConstructor;
@@ -36,6 +42,8 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 	private AuthenticationManager authenticationManager;
 
 	private UserService userService;
+
+	private UserMapper userMapper;
 	
 	private MessageSourceAccessor accessor;
     
@@ -55,10 +63,17 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
 				userRequestDto.getUsername(), userRequestDto.getPassword()
 			);
-
 			return this.authenticationManager.authenticate(authToken);
-		} catch (IOException e) {
-			throw new UnauthorizedException(this.accessor.getMessage("user.notAuthorized"));
+		} catch (IOException ioException) {
+			throw new ServerErrorException(this.accessor.getMessage("server.error"));
+		} catch (DisabledException disabledException) {
+			throw new UnauthorizedException(this.accessor.getMessage("user.disabledAccount"));
+		} catch (LockedException lockedException) {
+			throw new UnauthorizedException(this.accessor.getMessage("user.lockedAccount"));
+		} catch (BadCredentialsException | EntryNotFoundException badCredentialsException) {
+			throw new UnauthorizedException(this.accessor.getMessage("user.incorrectCredentials"));
+		} catch (AuthenticationException entryNotFoundException) {
+			throw new UnauthorizedException(this.accessor.getMessage("user.incorrectCredentials"));
 		}
     }
 
@@ -84,7 +99,8 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setHeader("access_token", accessToken);
 		response.setHeader("refresh_token", refreshToken);
-		Response<User> responseBuild = Response.build(user);
+		UserResponseDto userResponseDto = this.userMapper.userUserResponseDtoMapper(user);
+		Response<UserResponseDto> responseBuild = Response.build(userResponseDto);
 
 		new ObjectMapper().writeValue(response.getOutputStream(), responseBuild);
 	}
