@@ -9,8 +9,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.raven.api.exception.EntryNotFoundException;
 import com.raven.api.exception.UnauthorizedException;
-import com.raven.api.model.Image;
-import com.raven.api.model.ImageComment;
+import com.raven.api.model.CommentLike;
+import com.raven.api.model.Post;
+import com.raven.api.model.PostComment;
+import com.raven.api.model.PostLike;
 import com.raven.api.model.Role;
 import com.raven.api.model.User;
 import com.raven.api.model.enums.RoleName;
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,16 +68,22 @@ public class UserServiceImpl implements UserService {
 	private Long accessTokenExpirationTimeMillis;
 
     @Override
+    @Transactional
     public User createUser(final User user, final RoleName roleName) {
         final List<Role> roles = new ArrayList<>();
-        final List<Image> images = new ArrayList<>();
-        final List<ImageComment> imageComments = new ArrayList<>();
+        final List<Post> posts = new ArrayList<>();
+        final List<PostComment> postComments = new ArrayList<>();
+        final List<PostLike> postLikes = new ArrayList<>();
+        final List<CommentLike> commentLikes = new ArrayList<>();
         final String plainPassword = user.getPassword();
+
         user.setPassword(passwordEncoder.encode(plainPassword));
         roles.add(findRole(roleName));
         user.setRoles(roles);
-        user.setImages(images);
-        user.setImageComments(imageComments);
+        user.setPosts(posts);
+        user.setPostComments(postComments);
+        user.setPostLikes(postLikes);
+        user.setCommentLikes(commentLikes);
         user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
@@ -83,15 +92,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Role findRole(final RoleName roleName) {
-        final Optional<Role> roleOptional = roleRepository.findByRoleName(roleName);
+        final Optional<Role> roleOptional = this.roleRepository.findByRoleName(roleName);
+        
         if (roleOptional.isEmpty()) {
             throw new EntryNotFoundException(
-                    accessor.getMessage("user.roleName.notValid", new Object[]{roleName}));
+                    this.accessor.getMessage("user.roleName.notValid", new Object[]{roleName}));
         }
         return roleOptional.get();
     }
 
     @Override
+    @Transactional
     public User addRoleToUser(final User user, final RoleName roleName) {
         final Optional<Role> roleOptional = this.roleRepository.findByRoleName(roleName);
 
@@ -145,14 +156,16 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedException(accessor.getMessage("user.noLogin"));
         }
 
-        return findUserByUsername(username.get());
+        return this.findUserByUsername(username.get());
     }
 
     @Override
+    @Transactional
     public void deleteUserById(final Long id) {
         if (id == null) {
             throw new EntryNotFoundException(accessor.getMessage("user.id.empty"));
         }
+
         this.userRepository.deleteById(id);
     }
 

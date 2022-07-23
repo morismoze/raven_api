@@ -23,6 +23,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 @Component
@@ -61,11 +62,17 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     filterChain.doFilter(request, response);
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
+                } catch (IllegalArgumentException illegalArgumentException) {
+                    illegalArgumentException.printStackTrace();
+                } catch (TokenExpiredException tokenExpiredException) {
+                    tokenExpiredException.printStackTrace();
+                    response.setHeader("error", "expired_token");
+                    response.sendError(HttpStatus.UNAUTHORIZED.value());
                 } catch (JWTVerificationException e) {
                     e.printStackTrace();
                     response.sendError(HttpStatus.UNAUTHORIZED.value());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } else {
                 filterChain.doFilter(request, response);

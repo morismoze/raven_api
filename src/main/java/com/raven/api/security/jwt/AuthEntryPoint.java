@@ -22,7 +22,7 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
         
-        System.out.println(authException.getMessage());
+        // @todo: make throwing custom AuthenticationExceptions work
 
         int UNAUTHORIZED = HttpStatus.UNAUTHORIZED.value();
         response.setStatus(UNAUTHORIZED);

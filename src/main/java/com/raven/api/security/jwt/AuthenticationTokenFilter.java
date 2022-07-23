@@ -83,19 +83,19 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 		Algorithm algorithm = Algorithm.HMAC256(this.secret.getBytes());
 		String accessToken = JWT.create()
 			.withSubject(userPrincipal.getUsername())
-			.withExpiresAt(new Date(this.accessTokenExpirationTimeMillis))
+			.withExpiresAt(new Date(new Date().getTime() + this.accessTokenExpirationTimeMillis))
 			.withIssuer(request.getRequestURL().toString())
 			.withClaim(this.claim, userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
 			.sign(algorithm);
 
 		String refreshToken = JWT.create()
 			.withSubject(userPrincipal.getUsername())
-			.withExpiresAt(new Date(this.refreshTokenExpirationTimeMillis))
+			.withExpiresAt(new Date(new Date().getTime() + this.refreshTokenExpirationTimeMillis))
 			.withIssuer(request.getRequestURL().toString())
 			.sign(algorithm);
-
+			
 		User user = this.userService.findUserByUsername(userPrincipal.getUsername());
-
+		
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setHeader("access_token", accessToken);
 		response.setHeader("refresh_token", refreshToken);

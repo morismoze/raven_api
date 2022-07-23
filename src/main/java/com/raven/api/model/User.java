@@ -9,6 +9,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "`user`")
+@Getter
+@Setter
 @ToString
 public class User {
 
@@ -32,17 +34,23 @@ public class User {
     @Column(nullable = false, unique = true, name = "username")
     private String username;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<Image> images;
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<ImageComment> imageComments;
+    @OneToMany(mappedBy = "user")
+    private List<PostLike> postLikes;
+
+    @OneToMany(mappedBy = "user")
+    private List<PostComment> postComments;
+
+    @OneToMany(mappedBy = "user")
+    private List<CommentLike> commentLikes;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -60,8 +68,10 @@ public class User {
                 final String password, 
                 final String username, 
                 final List<Role> roles, 
-                final List<Image> images, 
-                final List<ImageComment> imageComments, 
+                final List<Post> posts, 
+                final List<PostLike> postLikes, 
+                final List<PostComment> postComments, 
+                final List<CommentLike> commentLikes, 
                 final Timestamp createdAt, 
                 final Timestamp updatedAt) {
         this.id = id;
@@ -71,97 +81,11 @@ public class User {
         this.password = password;
         this.username = username;
         this.roles = List.copyOf(roles);
-        this.images = List.copyOf(images);
-        this.imageComments = List.copyOf(imageComments);
-        this.createdAt = new Timestamp(System.currentTimeMillis());
-        this.updatedAt = new Timestamp(System.currentTimeMillis());;
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return this.firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return this.lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public List<Role> getRoles() {
-        return this.roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
-
-    public List<Image> getImages() {
-        return this.images;
-    }
-
-    public void setImages(List<Image> images) {
-        this.images = images;
-    }
-
-    public List<ImageComment> getImageComments() {
-        return this.imageComments;
-    }
-
-    public void setImageComments(List<ImageComment> imageComments) {
-        this.imageComments = imageComments;
-    }
-
-    public Timestamp getCreatedAt() {
-        return this.createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
+        this.posts = List.copyOf(posts);
+        this.postLikes = List.copyOf(postLikes);
+        this.postComments = List.copyOf(postComments);
+        this.commentLikes = List.copyOf(commentLikes);
         this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return this.updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 

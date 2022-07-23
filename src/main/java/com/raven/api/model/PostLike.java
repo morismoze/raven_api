@@ -16,11 +16,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "comment_like")
+@Table(name = "post_like")
 @Getter
 @Setter
 @ToString
-public class CommentLike {
+public class PostLike {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +28,8 @@ public class CommentLike {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "post_comment_id")
-    private PostComment postComment;
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -41,16 +41,16 @@ public class CommentLike {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    public CommentLike() {
+    public PostLike() {
     }
 
-    public CommentLike(final Long id, 
-                       final PostComment postComment, 
-                       final User user, 
-                       final Timestamp createdAt, 
-                       final Timestamp updatedAt) {
+    public PostLike(final Long id, 
+                    final Post post, 
+                    final User user, 
+                    final Timestamp createdAt, 
+                    final Timestamp updatedAt) {
         this.id = id;
-        this.postComment = postComment;
+        this.post = post;
         this.user = user;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

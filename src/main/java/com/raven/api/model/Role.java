@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "role")
-@NoArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -21,7 +20,11 @@ public class Role {
     @Column(name = "name")
     private RoleName roleName;
 
-    public Role(final Long id, final RoleName roleName) {
+    public Role() {
+    }
+
+    public Role(final Long id, 
+                final RoleName roleName) {
         this.id = id;
         this.roleName = roleName;
     }

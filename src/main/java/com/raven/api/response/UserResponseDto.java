@@ -3,8 +3,10 @@ package com.raven.api.response;
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.raven.api.model.Image;
-import com.raven.api.model.ImageComment;
+import com.raven.api.model.CommentLike;
+import com.raven.api.model.Post;
+import com.raven.api.model.PostComment;
+import com.raven.api.model.PostLike;
 import com.raven.api.model.Role;
 
 import lombok.AllArgsConstructor;
@@ -13,8 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -31,10 +33,6 @@ public class UserResponseDto {
     private String username;
 
     private List<Role> roles;
-
-    private List<Image> images;
-
-    private List<ImageComment> imageComments;
 
     private Timestamp createdAt;
 
