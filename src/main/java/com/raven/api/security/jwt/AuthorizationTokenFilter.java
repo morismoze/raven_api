@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,12 +23,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.raven.api.exception.ServerErrorException;
 
 @Component
 public class AuthorizationTokenFilter extends OncePerRequestFilter {
+
+    private MessageSourceAccessor accessor;
 
 	@Value(value = "${jwt.secret}")
 	private String secret;
@@ -66,13 +69,10 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
                     illegalArgumentException.printStackTrace();
                 } catch (TokenExpiredException tokenExpiredException) {
                     tokenExpiredException.printStackTrace();
-                    response.setHeader("error", "expired_token");
-                    response.sendError(HttpStatus.UNAUTHORIZED.value());
-                } catch (JWTVerificationException e) {
-                    e.printStackTrace();
+                    response.setHeader("error", "expired_access_token");
                     response.sendError(HttpStatus.UNAUTHORIZED.value());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new ServerErrorException(this.accessor.getMessage("server.error"));
                 }
             } else {
                 filterChain.doFilter(request, response);

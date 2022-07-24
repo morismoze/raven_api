@@ -87,13 +87,11 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 			.withIssuer(request.getRequestURL().toString())
 			.withClaim(this.claim, userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
 			.sign(algorithm);
-
 		String refreshToken = JWT.create()
 			.withSubject(userPrincipal.getUsername())
 			.withExpiresAt(new Date(new Date().getTime() + this.refreshTokenExpirationTimeMillis))
 			.withIssuer(request.getRequestURL().toString())
-			.sign(algorithm);
-			
+			.sign(algorithm);	
 		User user = this.userService.findUserByUsername(userPrincipal.getUsername());
 		
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);

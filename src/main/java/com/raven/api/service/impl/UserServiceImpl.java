@@ -5,9 +5,10 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.raven.api.exception.EntryNotFoundException;
+import com.raven.api.exception.ServerErrorException;
 import com.raven.api.exception.UnauthorizedException;
 import com.raven.api.model.CommentLike;
 import com.raven.api.model.Post;
@@ -34,9 +35,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -93,7 +92,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Role findRole(final RoleName roleName) {
         final Optional<Role> roleOptional = this.roleRepository.findByRoleName(roleName);
-        
+
         if (roleOptional.isEmpty()) {
             throw new EntryNotFoundException(
                     this.accessor.getMessage("user.roleName.notValid", new Object[]{roleName}));
@@ -183,29 +182,23 @@ public class UserServiceImpl implements UserService {
                 User user = this.findUserByUsername(username);
                 String accessToken = JWT.create()
                     .withSubject(user.getUsername())
-                    .withExpiresAt(new Date(this.accessTokenExpirationTimeMillis))
+                    .withExpiresAt(new Date(new Date().getTime() + this.accessTokenExpirationTimeMillis))
                     .withIssuer(request.getRequestURL().toString())
-                    .withClaim(this.claim, user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toList()))
+                    .withClaim(this.claim, user.getRoles().stream().map(role -> role.getRoleName().toString()).collect(Collectors.toList()))
                     .sign(algorithm);
 
-                Map<String, String> tokens = new HashMap<>();
-                tokens.put("accessToken", accessToken);
-                tokens.put("refreshToken", refreshToken);
+                response.setHeader("access_token", accessToken);
+		        response.setHeader("refresh_token", refreshToken);
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (JWTCreationException e) {
-                e.printStackTrace();
-            } catch (JWTVerificationException e) {
-                e.printStackTrace();
+            } catch (TokenExpiredException tokenExpiredException) {
+                response.setHeader("error", "expired_refresh_token");
                 try {
                     response.sendError(HttpStatus.UNAUTHORIZED.value());
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
                 }
+            } catch (Exception exception) {
+                throw new ServerErrorException(this.accessor.getMessage("server.error"));
             }
         } else {
             throw new UnauthorizedException(this.accessor.getMessage("user.missingToken"));

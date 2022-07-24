@@ -88,7 +88,7 @@
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" primaryKeyName="pk_tag_id"/>
             </column>
-            <column name="name" type="VARCHAR(10)">
+            <column name="name" type="VARCHAR(20)">
                 <constraints unique="true" uniqueConstraintName="tag_name_uniq" nullable="false"/>
             </column>
         </createTable>

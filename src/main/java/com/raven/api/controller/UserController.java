@@ -77,7 +77,6 @@ public class UserController {
     }
 
     @GetMapping("/token/refresh")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
         this.userService.refreshToken(request, response);
     }
