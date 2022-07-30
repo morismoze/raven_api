@@ -39,6 +39,7 @@ public class RestResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {Exception.class})
     protected ResponseEntity<?> handleDefaultErrorException(Exception ex) {
+        ex.printStackTrace();
         Response<?> response = Response.build(this.accessor.getMessage("server.error"), true);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }

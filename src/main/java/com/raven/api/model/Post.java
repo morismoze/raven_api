@@ -38,6 +38,9 @@ public class Post {
     @Column(nullable = false, name = "description")
     private String description;
 
+    @Column(nullable = false, name = "mature")
+    private boolean mature;
+
     @OneToOne(mappedBy = "post")
     private Cover cover;
 
@@ -45,7 +48,7 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany
     @JoinTable(name = "post_tag",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))

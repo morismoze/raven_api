@@ -27,8 +27,8 @@ public class Cover {
     @Column(name = "id")
     private Long id;    
 
-    @Column(nullable = false, name = "path")
-    private String path;
+    @Column(nullable = false, name = "url")
+    private String url;
 
     @OneToOne
     @JoinColumn(name = "post_id")
@@ -44,12 +44,12 @@ public class Cover {
     }
 
     public Cover(final Long id, 
-                 final String path, 
+                 final String url, 
                  final Post post, 
                  final Timestamp createdAt, 
                  final Timestamp updatedAt) {
         this.id = id;
-        this.path = path;
+        this.url = url;
         this.post = post;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

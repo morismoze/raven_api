@@ -69,7 +69,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .exceptionHandling().authenticationEntryPoint(this.authEntryPoint).and()
             .formLogin().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests().antMatchers("/user/create", "/login", "/user/token/refresh").permitAll()
+            .authorizeRequests().antMatchers("/user/create", "/login", "/user/token/refresh").permitAll().and()
+            .authorizeRequests().antMatchers("/tag/**").permitAll()
             .anyRequest().authenticated();
         http.addFilter(new AuthenticationTokenFilter(
             authenticationManagerBean(),

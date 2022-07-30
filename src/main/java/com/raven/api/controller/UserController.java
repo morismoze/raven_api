@@ -5,7 +5,6 @@ import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
@@ -17,8 +16,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.raven.api.service.UserService;
 import com.raven.api.validation.UserRequestDtoValidator;
-import com.raven.api.exception.EntryNotFoundException;
-import com.raven.api.exception.UnauthorizedException;
 import com.raven.api.mapper.UserMapper;
 import com.raven.api.model.User;
 import com.raven.api.model.enums.RoleName;
@@ -52,7 +49,7 @@ public class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<Response<?>> createUser(@RequestBody final UserRequestDto userRequestDto,
-                                               final BindingResult errors) {
+        final BindingResult errors) {
         userRequestDtoValidator.validate(userRequestDto, errors);
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(Response.build(errors));

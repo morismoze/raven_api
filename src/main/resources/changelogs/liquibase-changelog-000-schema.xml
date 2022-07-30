@@ -155,5 +155,26 @@
             </column>
         </createTable>
     </changeSet>
-    
+
+    <changeSet id="20220727-00" author="mmoze">
+        <addColumn tableName="post">
+            <column name="mature" type="BOOLEAN" defaultValue="false"/>
+        </addColumn>
+        <renameColumn columnDataType="VARCHAR"
+                newColumnName="url"
+                oldColumnName="path"
+                tableName="cover"/>
+    </changeSet>
+
+    <changeSet id="20220730-00" author="mmoze">
+        <dropForeignKeyConstraint baseTableName="post_tag"
+            constraintName="fk_post_tag_user_id" />
+
+        <addForeignKeyConstraint
+            constraintName="fk_post_tag_post_id"
+            referencedTableName="post" referencedColumnNames="id" 
+            baseColumnNames="post_id"
+            baseTableName="post_tag" />
+    </changeSet>
+
 </databaseChangeLog>

@@ -3,10 +3,6 @@ package com.raven.api.response;
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.raven.api.model.CommentLike;
-import com.raven.api.model.Post;
-import com.raven.api.model.PostComment;
-import com.raven.api.model.PostLike;
 import com.raven.api.model.Role;
 
 import lombok.AllArgsConstructor;

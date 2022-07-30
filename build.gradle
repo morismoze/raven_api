@@ -25,6 +25,8 @@ ext {
 	auth0JwtVersion = "4.0.0"
 	liquibaseVersion = "4.13.0"
 	jacksonDatatypeVersion = "2.3.0-rc1"
+	apacheCommonsVersion = "3.0"
+	cloudinaryVersion = "1.0.2"
 }
 
 dependencies {
@@ -37,6 +39,8 @@ dependencies {
 	implementation "com.auth0:java-jwt:${auth0JwtVersion}"
 	implementation group: "org.liquibase", name: "liquibase-core", version: "${liquibaseVersion}"
 	implementation group: "com.fasterxml.jackson.datatype", name: "jackson-datatype-jsr310", version: "${jacksonDatatypeVersion}"
+	implementation "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
+	implementation "com.cloudinary:cloudinary:${cloudinaryVersion}"
 	developmentOnly "org.springframework.boot:spring-boot-devtools"
 	runtimeOnly "org.postgresql:postgresql"
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
