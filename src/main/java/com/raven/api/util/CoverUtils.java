@@ -2,7 +2,6 @@ package com.raven.api.util;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -34,7 +33,7 @@ public class CoverUtils {
 
     public static boolean isValidUrl(final String coverUrl) {
 
-        URL url;
+        final URL url;
         try {
             url = new URL(coverUrl);
             HttpURLConnection http = (HttpURLConnection) url.openConnection();

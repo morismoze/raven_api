@@ -41,7 +41,7 @@ public class PostComment {
     private User user;
 
     @OneToMany(mappedBy = "postComment")
-    private List<CommentLike> commentLikes;
+    private List<CommentVote> commentVotes;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -56,14 +56,14 @@ public class PostComment {
                        final String comment, 
                        final Post post, 
                        final User user, 
-                       final List<CommentLike> commentLikes, 
+                       final List<CommentVote> commentVotes, 
                        final Timestamp createdAt, 
                        final Timestamp updatedAt) {
         this.id = id;
         this.comment = comment;
         this.post = post;
         this.user = user;
-        this.commentLikes = List.copyOf(commentLikes);
+        this.commentVotes = List.copyOf(commentVotes);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

@@ -8,10 +8,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.raven.api.exception.EntryNotFoundException;
 import com.raven.api.exception.ServerErrorException;
 import com.raven.api.exception.UnauthorizedException;
-import com.raven.api.model.CommentLike;
+import com.raven.api.model.CommentVote;
 import com.raven.api.model.Post;
 import com.raven.api.model.PostComment;
-import com.raven.api.model.PostLike;
+import com.raven.api.model.PostVote;
 import com.raven.api.model.Role;
 import com.raven.api.model.User;
 import com.raven.api.model.enums.RoleName;
@@ -70,8 +70,8 @@ public class UserServiceImpl implements UserService {
         final List<Role> roles = new ArrayList<>();
         final List<Post> posts = new ArrayList<>();
         final List<PostComment> postComments = new ArrayList<>();
-        final List<PostLike> postLikes = new ArrayList<>();
-        final List<CommentLike> commentLikes = new ArrayList<>();
+        final List<PostVote> postVotes = new ArrayList<>();
+        final List<CommentVote> commentVotes = new ArrayList<>();
         final String plainPassword = user.getPassword();
 
         user.setPassword(passwordEncoder.encode(plainPassword));
@@ -79,8 +79,8 @@ public class UserServiceImpl implements UserService {
         user.setRoles(roles);
         user.setPosts(posts);
         user.setPostComments(postComments);
-        user.setPostLikes(postLikes);
-        user.setCommentLikes(commentLikes);
+        user.setPostVotes(postVotes);
+        user.setCommentVotes(commentVotes);
         user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 

@@ -44,13 +44,13 @@ public class User {
     private List<Post> posts;
 
     @OneToMany(mappedBy = "user")
-    private List<PostLike> postLikes;
+    private List<PostVote> postVotes;
 
     @OneToMany(mappedBy = "user")
     private List<PostComment> postComments;
 
     @OneToMany(mappedBy = "user")
-    private List<CommentLike> commentLikes;
+    private List<CommentVote> commentVotes;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -69,9 +69,9 @@ public class User {
                 final String username, 
                 final List<Role> roles, 
                 final List<Post> posts, 
-                final List<PostLike> postLikes, 
+                final List<PostVote> postVotes, 
                 final List<PostComment> postComments, 
-                final List<CommentLike> commentLikes, 
+                final List<CommentVote> commentVotes, 
                 final Timestamp createdAt, 
                 final Timestamp updatedAt) {
         this.id = id;
@@ -82,9 +82,9 @@ public class User {
         this.username = username;
         this.roles = List.copyOf(roles);
         this.posts = List.copyOf(posts);
-        this.postLikes = List.copyOf(postLikes);
+        this.postVotes = List.copyOf(postVotes);
         this.postComments = List.copyOf(postComments);
-        this.commentLikes = List.copyOf(commentLikes);
+        this.commentVotes = List.copyOf(commentVotes);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

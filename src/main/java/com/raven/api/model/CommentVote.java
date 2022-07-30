@@ -16,11 +16,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "comment_like")
+@Table(name = "comment_vote")
 @Getter
 @Setter
 @ToString
-public class CommentLike {
+public class CommentVote {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,10 +41,10 @@ public class CommentLike {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    public CommentLike() {
+    public CommentVote() {
     }
 
-    public CommentLike(final Long id, 
+    public CommentVote(final Long id, 
                        final PostComment postComment, 
                        final User user, 
                        final Timestamp createdAt, 

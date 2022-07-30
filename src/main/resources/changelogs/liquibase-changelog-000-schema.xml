@@ -160,21 +160,79 @@
         <addColumn tableName="post">
             <column name="mature" type="BOOLEAN" defaultValue="false"/>
         </addColumn>
-        <renameColumn columnDataType="VARCHAR"
-                newColumnName="url"
-                oldColumnName="path"
-                tableName="cover"/>
+        <renameColumn 
+            columnDataType="VARCHAR"
+            newColumnName="url"
+            oldColumnName="path"
+            tableName="cover"/>
     </changeSet>
 
     <changeSet id="20220730-00" author="mmoze">
-        <dropForeignKeyConstraint baseTableName="post_tag"
-            constraintName="fk_post_tag_user_id" />
-
+        <dropForeignKeyConstraint 
+            baseTableName="post_tag"
+            constraintName="fk_post_tag_user_id"/>
         <addForeignKeyConstraint
             constraintName="fk_post_tag_post_id"
-            referencedTableName="post" referencedColumnNames="id" 
+            referencedTableName="post" 
+            referencedColumnNames="id" 
             baseColumnNames="post_id"
-            baseTableName="post_tag" />
+            baseTableName="post_tag"/>
+    </changeSet>
+
+    <changeSet id="20220730-01" author="mmoze">
+        <dropPrimaryKey tableName="post_like"/>
+        <renameTable
+            oldTableName="post_like"
+            newTableName="post_vote"/>
+        <addPrimaryKey 
+            tableName="post_vote"
+            constraintName="pk_post_vote_id"
+            columnNames="id"/>
+        <dropForeignKeyConstraint 
+            baseTableName="post_vote"
+            constraintName="fk_post_like_post_id"/>
+        <addForeignKeyConstraint
+            constraintName="fk_post_vote_post_id"
+            referencedTableName="post" 
+            referencedColumnNames="id" 
+            baseColumnNames="post_id"
+            baseTableName="post_vote"/>
+        <dropForeignKeyConstraint 
+            baseTableName="post_vote"
+            constraintName="fk_post_like_user_id"/>
+        <addForeignKeyConstraint
+            constraintName="fk_post_vote_user_id"
+            referencedTableName="user" 
+            referencedColumnNames="id" 
+            baseColumnNames="user_id"
+            baseTableName="post_vote"/>
+
+        <dropPrimaryKey tableName="comment_like"/>
+        <renameTable
+            oldTableName="comment_like"
+            newTableName="comment_vote"/>
+        <addPrimaryKey 
+            tableName="comment_vote"
+            constraintName="pk_comment_vote_id"
+            columnNames="id"/>
+        <dropForeignKeyConstraint 
+            baseTableName="comment_vote"
+            constraintName="fk_comment_like_comment_id"/>
+        <addForeignKeyConstraint
+            constraintName="fk_comment_vote_post_comment_id"
+            referencedTableName="post_comment" 
+            referencedColumnNames="id" 
+            baseColumnNames="post_comment_id"
+            baseTableName="comment_vote"/>
+        <dropForeignKeyConstraint 
+            baseTableName="comment_vote"
+            constraintName="fk_comment_like_user_id"/>
+        <addForeignKeyConstraint
+            constraintName="fk_comment_vote_user_id"
+            referencedTableName="user" 
+            referencedColumnNames="id" 
+            baseColumnNames="user_id"
+            baseTableName="comment_vote"/>
     </changeSet>
 
 </databaseChangeLog>

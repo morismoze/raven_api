@@ -55,7 +55,7 @@ public class Post {
     private List<Tag> tags;
 
     @OneToMany(mappedBy = "post")
-    private List<PostLike> postLikes;
+    private List<PostVote> postVotes;
 
     @OneToMany(mappedBy = "post")
     private List<PostComment> postComments;
@@ -74,7 +74,7 @@ public class Post {
                 final User user, 
                 final String title, 
                 final String description, 
-                final List<PostLike> postLikes, 
+                final List<PostVote> postVotes, 
                 final List<PostComment> postComments, 
                 final Timestamp createdAt, 
                 final Timestamp updatedAt) {
@@ -83,7 +83,7 @@ public class Post {
         this.user = user;
         this.title = title;
         this.description = description;
-        this.postLikes = List.copyOf(postLikes);
+        this.postVotes = List.copyOf(postVotes);
         this.postComments = List.copyOf(postComments);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
