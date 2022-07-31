@@ -3,9 +3,6 @@ package com.raven.api.response;
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.raven.api.model.PostComment;
-import com.raven.api.model.PostUpvote;
-import com.raven.api.model.PostVote;
 import com.raven.api.model.Tag;
 
 import lombok.AllArgsConstructor;
@@ -35,9 +32,11 @@ public class PostResponseDto {
 
     private List<Tag> tags;
 
-    private Integer postUpvotes;
+    private Integer upvotes;
 
-    private Integer postDownvotes;
+    private Integer downvotes;
+
+    private Integer votes;
 
     private Timestamp createdAt;
 

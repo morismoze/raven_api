@@ -44,13 +44,19 @@ public class User {
     private List<Post> posts;
 
     @OneToMany(mappedBy = "user")
-    private List<PostVote> postVotes;
+    private List<PostUpvote> postUpvotes;
+
+    @OneToMany(mappedBy = "user")
+    private List<PostDownvote> postDownvotes;
 
     @OneToMany(mappedBy = "user")
     private List<PostComment> postComments;
 
     @OneToMany(mappedBy = "user")
-    private List<CommentVote> commentVotes;
+    private List<PostCommentUpvote> postCommentUpvotes;
+
+    @OneToMany(mappedBy = "user")
+    private List<PostCommentDownvote> postCommentDownvotes;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -69,9 +75,11 @@ public class User {
                 final String username, 
                 final List<Role> roles, 
                 final List<Post> posts, 
-                final List<PostVote> postVotes, 
+                final List<PostUpvote> postUpvotes, 
+                final List<PostDownvote> postDownvotes, 
                 final List<PostComment> postComments, 
-                final List<CommentVote> commentVotes, 
+                final List<PostCommentUpvote> postCommentUpvotes, 
+                final List<PostCommentDownvote> postCommentDownvotes, 
                 final Timestamp createdAt, 
                 final Timestamp updatedAt) {
         this.id = id;
@@ -82,9 +90,11 @@ public class User {
         this.username = username;
         this.roles = List.copyOf(roles);
         this.posts = List.copyOf(posts);
-        this.postVotes = List.copyOf(postVotes);
+        this.postUpvotes = List.copyOf(postUpvotes);
+        this.postDownvotes = List.copyOf(postDownvotes);
         this.postComments = List.copyOf(postComments);
-        this.commentVotes = List.copyOf(commentVotes);
+        this.postCommentUpvotes = List.copyOf(postCommentUpvotes);
+        this.postCommentDownvotes = List.copyOf(postCommentDownvotes);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

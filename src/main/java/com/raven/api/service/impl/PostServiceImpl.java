@@ -23,7 +23,6 @@ import com.raven.api.model.Post;
 import com.raven.api.model.PostComment;
 import com.raven.api.model.PostDownvote;
 import com.raven.api.model.PostUpvote;
-import com.raven.api.model.PostVote;
 import com.raven.api.model.User;
 import com.raven.api.repository.PostRepository;
 import com.raven.api.service.CoverService;

@@ -8,10 +8,12 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.raven.api.exception.EntryNotFoundException;
 import com.raven.api.exception.ServerErrorException;
 import com.raven.api.exception.UnauthorizedException;
-import com.raven.api.model.CommentVote;
 import com.raven.api.model.Post;
 import com.raven.api.model.PostComment;
-import com.raven.api.model.PostVote;
+import com.raven.api.model.PostCommentDownvote;
+import com.raven.api.model.PostCommentUpvote;
+import com.raven.api.model.PostDownvote;
+import com.raven.api.model.PostUpvote;
 import com.raven.api.model.Role;
 import com.raven.api.model.User;
 import com.raven.api.model.enums.RoleName;
@@ -70,8 +72,10 @@ public class UserServiceImpl implements UserService {
         final List<Role> roles = new ArrayList<>();
         final List<Post> posts = new ArrayList<>();
         final List<PostComment> postComments = new ArrayList<>();
-        final List<PostVote> postVotes = new ArrayList<>();
-        final List<CommentVote> commentVotes = new ArrayList<>();
+        final List<PostUpvote> postUpvotes = new ArrayList<>();
+        final List<PostDownvote> postDownvotes = new ArrayList<>();
+        final List<PostCommentUpvote> postCommentUpvotes = new ArrayList<>();
+        final List<PostCommentDownvote> postCommentDownvotes = new ArrayList<>();
         final String plainPassword = user.getPassword();
 
         user.setPassword(passwordEncoder.encode(plainPassword));
@@ -79,8 +83,10 @@ public class UserServiceImpl implements UserService {
         user.setRoles(roles);
         user.setPosts(posts);
         user.setPostComments(postComments);
-        user.setPostVotes(postVotes);
-        user.setCommentVotes(commentVotes);
+        user.setPostUpvotes(postUpvotes);
+        user.setPostDownvotes(postDownvotes);
+        user.setPostCommentUpvotes(postCommentUpvotes);
+        user.setPostCommentDownvotes(postCommentDownvotes);
         user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
