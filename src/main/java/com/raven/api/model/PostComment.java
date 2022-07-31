@@ -41,7 +41,10 @@ public class PostComment {
     private User user;
 
     @OneToMany(mappedBy = "postComment")
-    private List<CommentVote> commentVotes;
+    private List<PostCommentUpvote> postCommentUpvotes;
+
+    @OneToMany(mappedBy = "postComment")
+    private List<PostCommentDownvote> postCommentDownvotes;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -56,14 +59,16 @@ public class PostComment {
                        final String comment, 
                        final Post post, 
                        final User user, 
-                       final List<CommentVote> commentVotes, 
+                       final List<PostCommentUpvote> postCommentUpvotes,
+                       final List<PostCommentDownvote> postCommentDownvotes,
                        final Timestamp createdAt, 
                        final Timestamp updatedAt) {
         this.id = id;
         this.comment = comment;
         this.post = post;
         this.user = user;
-        this.commentVotes = List.copyOf(commentVotes);
+        this.postCommentUpvotes = List.copyOf(postCommentUpvotes);
+        this.postCommentDownvotes = List.copyOf(postCommentDownvotes);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

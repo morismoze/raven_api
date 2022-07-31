@@ -67,7 +67,6 @@ public class UserController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<Response<?>> getCurrentUser() {
         final User user = this.userService.findCurrent();
-
         final UserResponseDto userResponseDto = this.userMapper.userUserResponseDtoMapper(user);
 
         return ResponseEntity.ok().body(Response.build(userResponseDto));

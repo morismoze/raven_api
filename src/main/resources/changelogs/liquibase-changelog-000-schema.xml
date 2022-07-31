@@ -235,4 +235,90 @@
             baseTableName="comment_vote"/>
     </changeSet>
 
+    <changeSet id="20220731-00" author="mmoze">
+        <addColumn tableName="post">
+            <column name="web-id" type="VARCHAR(64)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20220731-01" author="mmoze">
+        <renameColumn 
+            newColumnName="web_id"
+            oldColumnName="web-id"
+            tableName="post"/>
+    </changeSet>
+
+    <changeSet id="20220731-02" author="mmoze">
+        <dropTable tableName="post_vote"/>
+        <dropTable tableName="comment_vote"/>
+        <createTable tableName="post_upvote">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_post_upvote_id"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_upvote_post_id" references="post(id)"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_upvote_user_id" references="user(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="post_downvote">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_post_downvote_id"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_downvote_post_id" references="post(id)"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_downvote_user_id" references="user(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="post_comment_upvote">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_post_comment_upvote_id"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_comment_upvote_post_id" references="post(id)"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_comment_upvote_user_id" references="user(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="post_comment_downvote">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_post_comment_downvote_id"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_comment_downvote_post_id" references="post(id)"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_comment_downvote_user_id" references="user(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

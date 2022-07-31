@@ -1,5 +1,7 @@
 package com.raven.api.request;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,7 +32,7 @@ public class PostRequestUrlDto {
     private String url;
 
     @NotNull
-    private Tag[] tags;
+    private List<Tag> tags;
 
     @NotNull
     private boolean mature;

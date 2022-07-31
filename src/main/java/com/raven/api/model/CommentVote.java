@@ -35,6 +35,12 @@ public class CommentVote {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "upvotes")
+    private Integer upvotes;
+
+    @Column(name = "downvotes")
+    private Integer downvotes;
+
     @Column(name = "created_at")
     private Timestamp createdAt;
 
@@ -47,11 +53,15 @@ public class CommentVote {
     public CommentVote(final Long id, 
                        final PostComment postComment, 
                        final User user, 
+                       final Integer upvotes,
+                       final Integer downvotes,
                        final Timestamp createdAt, 
                        final Timestamp updatedAt) {
         this.id = id;
         this.postComment = postComment;
         this.user = user;
+        this.upvotes = upvotes;
+        this.downvotes = downvotes;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

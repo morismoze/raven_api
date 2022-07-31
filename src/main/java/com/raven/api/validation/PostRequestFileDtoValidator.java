@@ -7,7 +7,6 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.raven.api.request.PostRequestFileDto;
-import com.raven.api.util.CoverUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,15 +35,15 @@ public class PostRequestFileDtoValidator implements Validator {
     public void validate(Object target, Errors errors) {
         ValidationUtils.rejectIfEmpty(errors, TITLE, accessor.getMessage("post.title.empty"));
         ValidationUtils.rejectIfEmpty(errors, DESCRIPTION, accessor.getMessage("post.description.empty"));
-        ValidationUtils.rejectIfEmpty(errors, BYTES, accessor.getMessage("post.cover.file.empty"));
+        //ValidationUtils.rejectIfEmpty(errors, BYTES, accessor.getMessage("post.cover.file.empty"));
         ValidationUtils.rejectIfEmpty(errors, TAGS, accessor.getMessage("post.tags.empty"));
         ValidationUtils.rejectIfEmpty(errors, MATURE, accessor.getMessage("post.mature.empty"));
         
         final PostRequestFileDto postRequestFileDto = (PostRequestFileDto) target;
 
-        if (!CoverUtils.isImage(postRequestFileDto.getFileBytes())) {
+        /* if (!CoverUtils.isImage(postRequestFileDto.getFileBytes())) {
             errors.rejectValue(BYTES, accessor.getMessage("post.cover.notValid"));
-        }
+        } */
     }
     
 }

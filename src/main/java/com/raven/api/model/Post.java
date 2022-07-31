@@ -3,7 +3,6 @@ package com.raven.api.model;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,6 +31,9 @@ public class Post {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "web_id")
+    private String webId;
+
     @Column(nullable = false, name = "title")
     private String title;
 
@@ -55,7 +57,10 @@ public class Post {
     private List<Tag> tags;
 
     @OneToMany(mappedBy = "post")
-    private List<PostVote> postVotes;
+    private List<PostDownvote> postDownvotes;
+
+    @OneToMany(mappedBy = "post")
+    private List<PostUpvote> postUpvotes;
 
     @OneToMany(mappedBy = "post")
     private List<PostComment> postComments;
@@ -74,7 +79,8 @@ public class Post {
                 final User user, 
                 final String title, 
                 final String description, 
-                final List<PostVote> postVotes, 
+                final List<PostUpvote> postUpvotes, 
+                final List<PostDownvote> postDownvotes, 
                 final List<PostComment> postComments, 
                 final Timestamp createdAt, 
                 final Timestamp updatedAt) {
@@ -83,7 +89,8 @@ public class Post {
         this.user = user;
         this.title = title;
         this.description = description;
-        this.postVotes = List.copyOf(postVotes);
+        this.postUpvotes = List.copyOf(postUpvotes);
+        this.postDownvotes = List.copyOf(postDownvotes);
         this.postComments = List.copyOf(postComments);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

@@ -1,7 +1,11 @@
 package com.raven.api.request;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.raven.api.model.Tag;
 
@@ -27,10 +31,10 @@ public class PostRequestFileDto {
     private String description;
 
     @NotNull
-    private String fileBytes;
+    private MultipartFile file;
 
     @NotNull
-    private Tag[] tags;
+    private String tags;
 
     @NotNull
     private boolean mature;

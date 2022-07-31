@@ -16,11 +16,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "post_vote")
+@Table(name = "post_upvote")
 @Getter
 @Setter
 @ToString
-public class PostVote {
+public class PostUpvote {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,33 +35,23 @@ public class PostVote {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "upvotes")
-    private Integer upvotes;
-
-    @Column(name = "downvotes")
-    private Integer downvotes;
-
     @Column(name = "created_at")
     private Timestamp createdAt;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    public PostVote() {
+    public PostUpvote() {
     }
 
-    public PostVote(final Long id, 
-                    final Post post, 
-                    final User user, 
-                    final Integer upvotes,
-                    final Integer downvotes,
-                    final Timestamp createdAt, 
-                    final Timestamp updatedAt) {
+    public PostUpvote(final Long id, 
+                      final Post post, 
+                      final User user, 
+                      final Timestamp createdAt, 
+                      final Timestamp updatedAt) {
         this.id = id;
         this.post = post;
         this.user = user;
-        this.upvotes = 0;
-        this.downvotes = 0;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
