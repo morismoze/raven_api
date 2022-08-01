@@ -14,6 +14,7 @@ import com.raven.api.model.PostCommentDownvote;
 import com.raven.api.model.PostCommentUpvote;
 import com.raven.api.model.PostDownvote;
 import com.raven.api.model.PostUpvote;
+import com.raven.api.model.PostView;
 import com.raven.api.model.Role;
 import com.raven.api.model.User;
 import com.raven.api.model.enums.RoleName;
@@ -76,6 +77,7 @@ public class UserServiceImpl implements UserService {
         final List<PostDownvote> postDownvotes = new ArrayList<>();
         final List<PostCommentUpvote> postCommentUpvotes = new ArrayList<>();
         final List<PostCommentDownvote> postCommentDownvotes = new ArrayList<>();
+        final List<PostView> postViews = new ArrayList<>();
         final String plainPassword = user.getPassword();
 
         user.setPassword(passwordEncoder.encode(plainPassword));
@@ -87,6 +89,7 @@ public class UserServiceImpl implements UserService {
         user.setPostDownvotes(postDownvotes);
         user.setPostCommentUpvotes(postCommentUpvotes);
         user.setPostCommentDownvotes(postCommentDownvotes);
+        user.setPostViews(postViews);
         user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
@@ -153,13 +156,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findCurrent() {
-        final Optional<String> username = AuthUtils.getCurrentUserUsername();
+        final Optional<String> usernameOptional = AuthUtils.getCurrentUserUsername();
         
-        if (username.isEmpty()) {
+        if (usernameOptional.isEmpty()) {
             throw new UnauthorizedException(accessor.getMessage("user.noLogin"));
         }
 
-        return this.findUserByUsername(username.get());
+        return this.findUserByUsername(usernameOptional.get());
     }
 
     @Override

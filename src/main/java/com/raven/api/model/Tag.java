@@ -13,13 +13,11 @@ import com.raven.api.model.enums.TagName;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "tag")
 @Getter
 @Setter
-@ToString
 public class Tag {
 
     @Id
@@ -37,6 +35,14 @@ public class Tag {
                final TagName tagName) {
         this.id = id;
         this.tagName = tagName;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", tagName='" + getTagName() + "'" +
+            "}";
     }
 
 }

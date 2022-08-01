@@ -12,11 +12,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.raven.api.exception.ServerErrorException;
 import com.raven.api.model.Post;
+import com.raven.api.model.PostComment;
 import com.raven.api.model.PostDownvote;
 import com.raven.api.model.PostUpvote;
+import com.raven.api.model.PostView;
 import com.raven.api.model.Tag;
+import com.raven.api.model.User;
 import com.raven.api.request.PostRequestFileDto;
 import com.raven.api.request.PostRequestUrlDto;
+import com.raven.api.response.PostCommentsResponseDto;
 import com.raven.api.response.PostResponseDto;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
@@ -54,11 +58,25 @@ public interface PostMapper {
         return post.getPostUpvotes().size() - post.getPostDownvotes().size();
     }
 
+    @Named("postViewsMapper")
+    default Integer postViewsMapper(List<PostView> postViews) {
+        return postViews.size();
+    }
+
     @Mapping(source = "cover.url", target = "coverUrl")
     @Mapping(source = "user.username", target = "username")
     @Mapping(source = "postUpvotes", target = "upvotes", qualifiedByName = "postUpvotesMapper")
     @Mapping(source = "postDownvotes", target = "downvotes", qualifiedByName = "postDownvotesMapper")
     @Mapping(target = "votes", source = ".", qualifiedByName = "postVotesMapper")
+    @Mapping(source = "postViews", target = "views", qualifiedByName = "postViewsMapper")
     PostResponseDto postPostResponseDtoMapper(Post post);
+
+    @Named("postCommentsMapper")
+    default Integer postCommentsMapper(List<PostComment> postComments) {
+        return postComments.size();
+    }
+
+    @Mapping(source = "postComments", target = "count", qualifiedByName = "postCommentsMapper")
+    PostCommentsResponseDto postCommentsPostCommentsResponseDtoMapper(Post post);
     
 }

@@ -15,13 +15,11 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "post_comment")
 @Getter
 @Setter
-@ToString
 public class PostComment {
     
     @Id
@@ -71,6 +69,20 @@ public class PostComment {
         this.postCommentDownvotes = List.copyOf(postCommentDownvotes);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", comment='" + getComment() + "'" +
+            ", post='" + getPost() + "'" +
+            ", user='" + getUser() + "'" +
+            ", postCommentUpvotes='" + getPostCommentUpvotes() + "'" +
+            ", postCommentDownvotes='" + getPostCommentDownvotes() + "'" +
+            ", createdAt='" + getCreatedAt() + "'" +
+            ", updatedAt='" + getUpdatedAt() + "'" +
+            "}";
     }
 
 }

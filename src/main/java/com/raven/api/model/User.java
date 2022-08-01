@@ -11,7 +11,6 @@ import java.util.List;
 @Table(name = "`user`")
 @Getter
 @Setter
-@ToString
 public class User {
 
     @Id
@@ -42,6 +41,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Post> posts;
+
+    @OneToMany(mappedBy = "user")
+    private List<PostView> postViews;
 
     @OneToMany(mappedBy = "user")
     private List<PostUpvote> postUpvotes;
@@ -75,6 +77,7 @@ public class User {
                 final String username, 
                 final List<Role> roles, 
                 final List<Post> posts, 
+                final List<PostView> postViews, 
                 final List<PostUpvote> postUpvotes, 
                 final List<PostDownvote> postDownvotes, 
                 final List<PostComment> postComments, 
@@ -90,6 +93,7 @@ public class User {
         this.username = username;
         this.roles = List.copyOf(roles);
         this.posts = List.copyOf(posts);
+        this.postViews = List.copyOf(postViews);
         this.postUpvotes = List.copyOf(postUpvotes);
         this.postDownvotes = List.copyOf(postDownvotes);
         this.postComments = List.copyOf(postComments);
@@ -97,6 +101,28 @@ public class User {
         this.postCommentDownvotes = List.copyOf(postCommentDownvotes);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", firstName='" + getFirstName() + "'" +
+            ", lastName='" + getLastName() + "'" +
+            ", email='" + getEmail() + "'" +
+            ", password='" + getPassword() + "'" +
+            ", username='" + getUsername() + "'" +
+            ", roles='" + getRoles() + "'" +
+            ", posts='" + getPosts() + "'" +
+            ", postViews='" + getPostViews() + "'" +
+            ", postUpvotes='" + getPostUpvotes() + "'" +
+            ", postDownvotes='" + getPostDownvotes() + "'" +
+            ", postComments='" + getPostComments() + "'" +
+            ", postCommentUpvotes='" + getPostCommentUpvotes() + "'" +
+            ", postCommentDownvotes='" + getPostCommentDownvotes() + "'" +
+            ", createdAt='" + getCreatedAt() + "'" +
+            ", updatedAt='" + getUpdatedAt() + "'" +
+            "}";
     }
 
 }

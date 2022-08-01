@@ -13,13 +13,11 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "post_downvote")
 @Getter
 @Setter
-@ToString
 public class PostDownvote {
     
     @Id
@@ -54,6 +52,17 @@ public class PostDownvote {
         this.user = user;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", post='" + getPost() + "'" +
+            ", user='" + getUser() + "'" +
+            ", createdAt='" + getCreatedAt() + "'" +
+            ", updatedAt='" + getUpdatedAt() + "'" +
+            "}";
     }
 
 }

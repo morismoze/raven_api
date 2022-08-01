@@ -321,4 +321,24 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="20220801-00" author="mmoze">
+        <createTable tableName="post_view">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_post_view_id"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_view_post_id" references="post(id)"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_view_user_id" references="user(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

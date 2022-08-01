@@ -8,29 +8,30 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "cover")
+@Table(name = "post_view")
 @Getter
 @Setter
-public class Cover {
+public class PostView {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;    
+    private Long id;
 
-    @Column(nullable = false, name = "url")
-    private String url;
-
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @ManyToOne
+    @JoinColumn(nullable = true, name = "user_id")
+    private User user;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -38,17 +39,17 @@ public class Cover {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    public Cover() {
+    public PostView() {
     }
 
-    public Cover(final Long id, 
-                 final String url, 
-                 final Post post, 
-                 final Timestamp createdAt, 
-                 final Timestamp updatedAt) {
+    public PostView(final Long id, 
+                    final Post post, 
+                    final User user, 
+                    final Timestamp createdAt, 
+                    final Timestamp updatedAt) {
         this.id = id;
-        this.url = url;
         this.post = post;
+        this.user = user;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -57,8 +58,8 @@ public class Cover {
     public String toString() {
         return "{" +
             " id='" + getId() + "'" +
-            ", url='" + getUrl() + "'" +
             ", post='" + getPost() + "'" +
+            ", user='" + getUser() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
             "}";

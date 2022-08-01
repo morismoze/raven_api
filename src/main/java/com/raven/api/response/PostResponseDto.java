@@ -38,6 +38,8 @@ public class PostResponseDto {
 
     private Integer votes;
 
+    private Integer views;
+
     private Timestamp createdAt;
 
     private Timestamp updatedAt;

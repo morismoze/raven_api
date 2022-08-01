@@ -18,13 +18,11 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "post")
 @Getter
 @Setter
-@ToString
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,6 +47,9 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "post")
+    private List<PostView> postViews;
 
     @ManyToMany
     @JoinTable(name = "post_tag",
@@ -79,6 +80,8 @@ public class Post {
                 final User user, 
                 final String title, 
                 final String description, 
+                final List<PostView> postViews,
+                final List<Tag> tags,
                 final List<PostUpvote> postUpvotes, 
                 final List<PostDownvote> postDownvotes, 
                 final List<PostComment> postComments, 
@@ -89,11 +92,33 @@ public class Post {
         this.user = user;
         this.title = title;
         this.description = description;
+        this.postViews = postViews;
+        this.tags = tags;
         this.postUpvotes = List.copyOf(postUpvotes);
         this.postDownvotes = List.copyOf(postDownvotes);
         this.postComments = List.copyOf(postComments);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", webId='" + getWebId() + "'" +
+            ", title='" + getTitle() + "'" +
+            ", description='" + getDescription() + "'" +
+            ", mature='" + isMature() + "'" +
+            ", cover='" + getCover() + "'" +
+            ", user='" + getUser() + "'" +
+            ", postViews='" + getPostViews() + "'" +
+            ", tags='" + getTags() + "'" +
+            ", postDownvotes='" + getPostDownvotes() + "'" +
+            ", postUpvotes='" + getPostUpvotes() + "'" +
+            ", postComments='" + getPostComments() + "'" +
+            ", createdAt='" + getCreatedAt() + "'" +
+            ", updatedAt='" + getUpdatedAt() + "'" +
+            "}";
     }
 
 }

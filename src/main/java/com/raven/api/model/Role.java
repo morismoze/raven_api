@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Table(name = "role")
 @Getter
 @Setter
-@ToString
 public class Role {
 
     @Id
@@ -27,6 +26,14 @@ public class Role {
                 final RoleName roleName) {
         this.id = id;
         this.roleName = roleName;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", roleName='" + getRoleName() + "'" +
+            "}";
     }
 
 }
