@@ -3,8 +3,6 @@ package com.raven.api.response;
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.raven.api.model.Tag;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,33 +14,20 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class PostResponseDto {
+public class PostCommentResponseDto {
 
-    private String webId;
+    private Long id;
 
-    private String title;
-
-    private String description;
-
-    private boolean mature;
-
-    private String coverUrl;
-
-    private String userId;
+    private String comment;
 
     private String username;
 
-    private List<Tag> tags;
+    private List<PostCommentUpvoteResponseDto> postCommentUpvotes;
 
-    private Integer upvotes;
-
-    private Integer downvotes;
-
-    private Integer votes;
-
-    private Integer views;
+    private List<PostCommentDownvoteResponseDto> postCommentDownvotes;
 
     private Timestamp createdAt;
 
     private Timestamp updatedAt;
+    
 }

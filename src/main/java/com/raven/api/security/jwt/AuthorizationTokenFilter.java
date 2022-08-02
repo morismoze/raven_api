@@ -27,10 +27,13 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.raven.api.exception.ServerErrorException;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class AuthorizationTokenFilter extends OncePerRequestFilter {
 
-    private MessageSourceAccessor accessor;
+    private final MessageSourceAccessor accessor;
 
 	@Value(value = "${jwt.secret}")
 	private String secret;
@@ -38,14 +41,18 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
 	@Value(value = "${jwt.claim}")
 	private String claim;
 
-    private final String TOKEN_TYPE = "Bearer ";
+    private final static String TOKEN_TYPE = "Bearer ";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         if (request.getServletPath().equals("/login") 
+            || request.getServletPath().equals("/logout") 
             || request.getServletPath().equals("/user/token/refresh")
-            || request.getServletPath().equals("/user/create")) {
+            || request.getServletPath().equals("/user/create")
+            || request.getServletPath().equals("/tag/")
+            || request.getServletPath().matches("/post/[a-zA-Z0-9]{12}")
+            || request.getServletPath().matches("/post/[a-zA-Z0-9]{12}/comments")) {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);

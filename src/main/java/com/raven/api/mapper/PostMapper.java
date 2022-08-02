@@ -13,23 +13,22 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.raven.api.exception.ServerErrorException;
 import com.raven.api.model.Post;
 import com.raven.api.model.PostComment;
+import com.raven.api.model.PostCommentDownvote;
+import com.raven.api.model.PostCommentUpvote;
 import com.raven.api.model.PostDownvote;
 import com.raven.api.model.PostUpvote;
 import com.raven.api.model.PostView;
 import com.raven.api.model.Tag;
-import com.raven.api.model.User;
 import com.raven.api.request.PostRequestFileDto;
 import com.raven.api.request.PostRequestUrlDto;
+import com.raven.api.response.PostCommentResponseDto;
 import com.raven.api.response.PostCommentsResponseDto;
 import com.raven.api.response.PostResponseDto;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", uses = { PostCommentMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PostMapper {
 
     Post postPostRequestUrlDtoMapper(PostRequestUrlDto postRequestUrlDto);
-
-    @Mapping(target = "tags", qualifiedByName = "tagsMapper")
-    Post postPostRequestFileDtoMapper(PostRequestFileDto postRequestFileDto);
 
     @Named("tagsMapper")
     default List<Tag> tagsMapper(String tagsString) {
@@ -42,6 +41,9 @@ public interface PostMapper {
             throw new ServerErrorException("The application has encountered an unexpected error");
         }
     }
+
+    @Mapping(target = "tags", qualifiedByName = "tagsMapper")
+    Post postPostRequestFileDtoMapper(PostRequestFileDto postRequestFileDto);
 
     @Named("postUpvotesMapper")
     default Integer postUpvotesMapper(List<PostUpvote> postUpvotes) {
@@ -64,19 +66,21 @@ public interface PostMapper {
     }
 
     @Mapping(source = "cover.url", target = "coverUrl")
+    @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "user.username", target = "username")
     @Mapping(source = "postUpvotes", target = "upvotes", qualifiedByName = "postUpvotesMapper")
     @Mapping(source = "postDownvotes", target = "downvotes", qualifiedByName = "postDownvotesMapper")
-    @Mapping(target = "votes", source = ".", qualifiedByName = "postVotesMapper")
+    @Mapping(source = ".", target = "votes", qualifiedByName = "postVotesMapper")
     @Mapping(source = "postViews", target = "views", qualifiedByName = "postViewsMapper")
     PostResponseDto postPostResponseDtoMapper(Post post);
 
-    @Named("postCommentsMapper")
-    default Integer postCommentsMapper(List<PostComment> postComments) {
+    @Named("postCommentsCountMapper")
+    default Integer postCommentsCountMapper(List<PostComment> postComments) {
         return postComments.size();
     }
 
-    @Mapping(source = "postComments", target = "count", qualifiedByName = "postCommentsMapper")
-    PostCommentsResponseDto postCommentsPostCommentsResponseDtoMapper(Post post);
+    @Mapping(source = "postComments", target = "comments")
+    @Mapping(source = "postComments", target = "count",  qualifiedByName = "postCommentsCountMapper")
+    PostCommentsResponseDto postPostCommentsResponseDtoMapper(Post post);
     
 }

@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cloudinary.Cloudinary;
 import com.raven.api.exception.EntryNotFoundException;
 import com.raven.api.exception.ServerErrorException;
-import com.raven.api.exception.UnauthorizedException;
 import com.raven.api.model.Cover;
 import com.raven.api.model.Post;
 import com.raven.api.model.PostComment;
@@ -27,10 +26,8 @@ import com.raven.api.model.PostUpvote;
 import com.raven.api.model.PostView;
 import com.raven.api.model.User;
 import com.raven.api.repository.PostRepository;
-import com.raven.api.repository.PostViewRepository;
 import com.raven.api.service.CoverService;
 import com.raven.api.service.PostService;
-import com.raven.api.service.UserService;
 import com.raven.api.util.FileUtils;
 import com.raven.api.util.StringUtils;
 
@@ -42,11 +39,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
 
-    private final PostViewRepository postViewRepository;
-
     private final CoverService coverService;
-
-    private final UserService userService;
 
     private final Cloudinary cloudinary;
 
@@ -111,28 +104,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post getPost(String webId) {
-        final Optional<Post> postOptional = this.postRepository.findByWebId(webId);
+        final Optional<Post> post = this.postRepository.findByWebId(webId);
         
-        if (postOptional.isEmpty()) {
+        if (post.isEmpty()) {
             throw new EntryNotFoundException(this.accessor.getMessage("post.notFound"));
         }
 
-        Post post = postOptional.get();
-        PostView postView = new PostView();
-
-        postView.setPost(post);
-        postView.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        postView.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-        try {
-            User user = this.userService.findCurrent();
-            postView.setUser(user);
-        } catch (UnauthorizedException | EntryNotFoundException e) {
-            // user viewed the post is not authenticated
-        }
-        PostView newView = this.postViewRepository.save(postView);
-        post.getPostViews().add(newView);
-
-        return post;
+        return post.get();
     }
     
 }

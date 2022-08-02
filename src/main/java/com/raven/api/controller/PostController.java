@@ -1,7 +1,6 @@
 package com.raven.api.controller;
 
 import java.net.URI;
-import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.raven.api.mapper.PostMapper;
 import com.raven.api.model.Post;
-import com.raven.api.model.PostComment;
 import com.raven.api.model.User;
 import com.raven.api.request.PostRequestFileDto;
 import com.raven.api.request.PostRequestUrlDto;
@@ -90,7 +88,7 @@ public class PostController {
     @GetMapping("/{webId}/comments")
     public ResponseEntity<Response<?>> getPostComments(@PathVariable String webId) {
         Post post = this.postService.getPost(webId);
-        PostCommentsResponseDto postCommentsResponseDto = this.postMapper.postCommentsPostCommentsResponseDtoMapper(post);
+        PostCommentsResponseDto postCommentsResponseDto = this.postMapper.postPostCommentsResponseDtoMapper(post);
 
         return ResponseEntity.ok().body(Response.build(postCommentsResponseDto));
     }

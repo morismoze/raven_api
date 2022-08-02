@@ -1,9 +1,5 @@
 package com.raven.api.response;
 
-import java.util.List;
-
-import com.raven.api.model.PostComment;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +11,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class PostCommentsResponseDto {
+public class PostCommentDownvoteResponseDto {
     
-    private List<PostCommentResponseDto> comments;
-
-    private Integer count;
+    private Long id;
 
 }
