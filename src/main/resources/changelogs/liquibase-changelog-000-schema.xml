@@ -341,4 +341,33 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="20220803-00" author="mmoze">
+        <renameColumn 
+            newColumnName="post_comment_id"
+            oldColumnName="post_id"
+            tableName="post_comment_upvote"/>
+        <renameColumn 
+            newColumnName="post_comment_id"
+            oldColumnName="post_id"
+            tableName="post_comment_downvote"/>
+        <dropForeignKeyConstraint 
+            baseTableName="post_comment_upvote"
+            constraintName="fk_post_comment_upvote_post_id"/>
+        <addForeignKeyConstraint
+            constraintName="fk_post_comment_upvote_post_comment_id"
+            referencedTableName="post_comment" 
+            referencedColumnNames="id" 
+            baseColumnNames="post_comment_id"
+            baseTableName="post_comment_upvote"/>
+        <dropForeignKeyConstraint 
+            baseTableName="post_comment_downvote"
+            constraintName="fk_post_comment_downvote_post_id"/>
+        <addForeignKeyConstraint
+            constraintName="fk_post_comment_downvote_post_comment_id"
+            referencedTableName="post_comment" 
+            referencedColumnNames="id" 
+            baseColumnNames="post_comment_id"
+            baseTableName="post_comment_downvote"/>
+    </changeSet>
+
 </databaseChangeLog>

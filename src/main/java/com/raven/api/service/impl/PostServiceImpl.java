@@ -12,6 +12,8 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +29,7 @@ import com.raven.api.model.PostView;
 import com.raven.api.model.User;
 import com.raven.api.repository.PostRepository;
 import com.raven.api.service.CoverService;
+import com.raven.api.service.PostCommentService;
 import com.raven.api.service.PostService;
 import com.raven.api.util.FileUtils;
 import com.raven.api.util.StringUtils;
@@ -38,6 +41,8 @@ import lombok.RequiredArgsConstructor;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+
+    private final PostCommentService postCommentService;
 
     private final CoverService coverService;
 
@@ -73,6 +78,39 @@ public class PostServiceImpl implements PostService {
         }
     }
 
+    @Override
+    public Post getPost(String webId) {
+        final Optional<Post> postOptional = this.postRepository.findByWebId(webId);
+        
+        if (postOptional.isEmpty()) {
+            throw new EntryNotFoundException(this.accessor.getMessage("post.notFound"));
+        }
+
+        return postOptional.get();
+    }
+
+    @Override
+    public List<PostComment> getPageablePostComments(String webId, Integer page, Integer limit) {
+        final Pageable pageable = PageRequest.of(page, limit);
+        final List<PostComment> comments = this.postRepository.findCommentsByWebId(webId, pageable);
+
+        return comments;
+    }
+
+    @Override
+    @Transactional
+    public void createPostComment(String webId, User user, String comment) {
+        final Optional<Post> postOptional = this.postRepository.findByWebId(webId);
+        
+        if (postOptional.isEmpty()) {
+            throw new EntryNotFoundException(this.accessor.getMessage("post.notFound"));
+        }
+
+        final Post post = postOptional.get();
+        final PostComment postComment = this.postCommentService.createPostComment(post, user, comment);
+        post.getPostComments().add(postComment);
+    }
+
     private String uploadToCloudinary(MultipartFile multipartFile) throws IOException {
         final File file = FileUtils.multipartToFile(multipartFile);
         final Map<String, String> options = new HashMap<>();
@@ -100,17 +138,6 @@ public class PostServiceImpl implements PostService {
         post.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
         return post;
-    }
-
-    @Override
-    public Post getPost(String webId) {
-        final Optional<Post> post = this.postRepository.findByWebId(webId);
-        
-        if (post.isEmpty()) {
-            throw new EntryNotFoundException(this.accessor.getMessage("post.notFound"));
-        }
-
-        return post.get();
     }
     
 }

@@ -76,7 +76,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests().antMatchers("/user/create", "/login", "/logout", "/user/token/refresh").permitAll().and()
             .authorizeRequests().antMatchers("/tag/**").permitAll().and()
             .authorizeRequests().antMatchers("/post/**").permitAll().and()
-            .authorizeRequests().antMatchers("/post/file/create", "/post/file/create").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+            .authorizeRequests().antMatchers(
+                "/post/file/create", 
+                "/post/file/create",
+                "post/{webId}/comments/create").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
             .anyRequest().authenticated();
         http.addFilter(new AuthenticationTokenFilter(
             authenticationManagerBean(),

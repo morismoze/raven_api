@@ -13,15 +13,12 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.raven.api.exception.ServerErrorException;
 import com.raven.api.model.Post;
 import com.raven.api.model.PostComment;
-import com.raven.api.model.PostCommentDownvote;
-import com.raven.api.model.PostCommentUpvote;
 import com.raven.api.model.PostDownvote;
 import com.raven.api.model.PostUpvote;
 import com.raven.api.model.PostView;
 import com.raven.api.model.Tag;
 import com.raven.api.request.PostRequestFileDto;
 import com.raven.api.request.PostRequestUrlDto;
-import com.raven.api.response.PostCommentResponseDto;
 import com.raven.api.response.PostCommentsResponseDto;
 import com.raven.api.response.PostResponseDto;
 
@@ -74,13 +71,11 @@ public interface PostMapper {
     @Mapping(source = "postViews", target = "views", qualifiedByName = "postViewsMapper")
     PostResponseDto postPostResponseDtoMapper(Post post);
 
-    @Named("postCommentsCountMapper")
-    default Integer postCommentsCountMapper(List<PostComment> postComments) {
-        return postComments.size();
+    default PostCommentsResponseDto postCommentsPostCommentsResponseDtoMapper(List<PostComment> postComments) {
+        return postCommentsPostCommentsResponseDtoMapper(postComments.size(), postComments);
     }
 
     @Mapping(source = "postComments", target = "comments")
-    @Mapping(source = "postComments", target = "count",  qualifiedByName = "postCommentsCountMapper")
-    PostCommentsResponseDto postPostCommentsResponseDtoMapper(Post post);
+    PostCommentsResponseDto postCommentsPostCommentsResponseDtoMapper(Integer count, List<PostComment> postComments);
     
 }

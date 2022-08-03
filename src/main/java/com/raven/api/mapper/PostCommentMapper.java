@@ -14,5 +14,4 @@ public interface PostCommentMapper {
     @Mapping(source = "user.username", target = "username")
     public PostCommentResponseDto postCommentPostCommentResponseDtoMapper(PostComment postComment);
 
-   
 }
