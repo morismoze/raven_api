@@ -71,11 +71,7 @@ public interface PostMapper {
     @Mapping(source = "postViews", target = "views", qualifiedByName = "postViewsMapper")
     PostResponseDto postPostResponseDtoMapper(Post post);
 
-    default PostCommentsResponseDto postCommentsPostCommentsResponseDtoMapper(List<PostComment> postComments) {
-        return postCommentsPostCommentsResponseDtoMapper(postComments.size(), postComments);
-    }
-
     @Mapping(source = "postComments", target = "comments")
-    PostCommentsResponseDto postCommentsPostCommentsResponseDtoMapper(Integer count, List<PostComment> postComments);
+    PostCommentsResponseDto postCommentsPostCommentsResponseDtoMapper(Long count, Integer nextPage, List<PostComment> postComments);
     
 }

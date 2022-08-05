@@ -20,11 +20,15 @@ public class PostCommentResponseDto {
 
     private String comment;
 
+    private String userId;
+
     private String username;
 
-    private List<PostCommentUpvoteResponseDto> postCommentUpvotes;
+    private Integer upvotes;
 
-    private List<PostCommentDownvoteResponseDto> postCommentDownvotes;
+    private Integer downvotes;
+
+    private Integer votes;
 
     private Timestamp createdAt;
 

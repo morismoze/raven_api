@@ -11,6 +11,7 @@ import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -31,6 +32,7 @@ import com.raven.api.service.UserService;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity( securedEnabled = true )
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -73,13 +75,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .logout().permitAll()
             .logoutSuccessHandler((new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests().antMatchers("/user/create", "/login", "/logout", "/user/token/refresh").permitAll().and()
+            .authorizeRequests().antMatchers("/user/**", "/login", "/logout").permitAll().and()
             .authorizeRequests().antMatchers("/tag/**").permitAll().and()
-            .authorizeRequests().antMatchers("/post/**").permitAll().and()
-            .authorizeRequests().antMatchers(
-                "/post/file/create", 
-                "/post/file/create",
-                "post/{webId}/comments/create").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+            .authorizeRequests().antMatchers("/post/**").permitAll()
             .anyRequest().authenticated();
         http.addFilter(new AuthenticationTokenFilter(
             authenticationManagerBean(),

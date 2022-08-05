@@ -2,7 +2,10 @@ package com.raven.api.security.jwt;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Stream;
+
 import static java.util.Arrays.stream;
 
 import javax.servlet.FilterChain;
@@ -18,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.JWT;
@@ -26,6 +30,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.raven.api.exception.ServerErrorException;
+import com.raven.api.exception.UnauthorizedException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +40,8 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
 
     private final MessageSourceAccessor accessor;
 
+    private final AntPathMatcher pathMatcher;
+
 	@Value(value = "${jwt.secret}")
 	private String secret;
 
@@ -43,48 +50,53 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
 
     private final static String TOKEN_TYPE = "Bearer ";
 
+    private final static String[] SKIP_PATHS = new String[] {
+        "/login",
+        "/logout",
+        "/user/token/refresh",
+        "/user/create",
+        "/post/*",
+        "/post/*/comments",
+        "/tag/all"
+    };
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        if (request.getServletPath().equals("/login") 
-            || request.getServletPath().equals("/logout") 
-            || request.getServletPath().equals("/user/token/refresh")
-            || request.getServletPath().equals("/user/create")
-            || request.getServletPath().equals("/tag/")
-            || request.getServletPath().matches("/post/[a-zA-Z0-9]{12}")
-            || request.getServletPath().matches("/post/[a-zA-Z0-9]{12}/comments")) {
-            filterChain.doFilter(request, response);
-        } else {
-            String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        throws ServletException, IOException {
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-            if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_TYPE)) {
-                try {
-                    String token = authorizationHeader.substring(TOKEN_TYPE.length());
-                    Algorithm algorithm = Algorithm.HMAC256(this.secret.getBytes());
-                    JWTVerifier verifier = JWT.require(algorithm).build();
-                    DecodedJWT decodedJWT = verifier.verify(token);
-                    String username = decodedJWT.getSubject();
-                    String[] roles = decodedJWT.getClaim(this.claim).asArray(String.class);
-                    Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                    stream(roles).forEach(role -> {
-                        authorities.add(new SimpleGrantedAuthority(role));
-                    });
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                    filterChain.doFilter(request, response);
-                } catch (IllegalArgumentException illegalArgumentException) {
-                    illegalArgumentException.printStackTrace();
-                } catch (TokenExpiredException tokenExpiredException) {
-                    tokenExpiredException.printStackTrace();
-                    response.setHeader("error", "expired_access_token");
-                    response.sendError(HttpStatus.UNAUTHORIZED.value());
-                } catch (Exception e) {
-                    throw new ServerErrorException(this.accessor.getMessage("server.error"));
-                }
-            } else {
+        if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_TYPE)) {
+            try {
+                String token = authorizationHeader.substring(TOKEN_TYPE.length());
+                Algorithm algorithm = Algorithm.HMAC256(this.secret.getBytes());
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(token);
+                String username = decodedJWT.getSubject();
+                String[] roles = decodedJWT.getClaim(this.claim).asArray(String.class);
+                Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                stream(roles).forEach(role -> {
+                    authorities.add(new SimpleGrantedAuthority(role));
+                });
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 filterChain.doFilter(request, response);
+            } catch (IllegalArgumentException illegalArgumentException) {
+                illegalArgumentException.printStackTrace();
+            } catch (TokenExpiredException tokenExpiredException) {
+                tokenExpiredException.printStackTrace();
+                response.setHeader("error", "expired_access_token");
+                response.sendError(HttpStatus.UNAUTHORIZED.value());
+            } catch (Exception e) {
+                throw new ServerErrorException(this.accessor.getMessage("server.error"));
             }
+        } else {
+            throw new UnauthorizedException(this.accessor.getMessage("user.missingToken"));
         }
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return Arrays.stream(SKIP_PATHS).anyMatch(path -> this.pathMatcher.match(path, request.getServletPath()));
     }
     
 }

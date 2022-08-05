@@ -1,6 +1,7 @@
 package com.raven.api.model;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -64,5 +65,23 @@ public class PostCommentUpvote {
             ", updatedAt='" + getUpdatedAt() + "'" +
             "}";
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof PostCommentUpvote)) {
+            return false;
+        }
+        PostCommentUpvote postCommentUpvote = (PostCommentUpvote) o;
+        return Objects.equals(id, postCommentUpvote.id) && Objects.equals(postComment, postCommentUpvote.postComment) && Objects.equals(user, postCommentUpvote.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, postComment, user);
+    }
+
 
 }

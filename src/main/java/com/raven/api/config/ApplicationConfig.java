@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.util.AntPathMatcher;
 
 import com.cloudinary.Cloudinary;
 
@@ -38,5 +39,10 @@ public class ApplicationConfig {
         config.put("api_secret", this.secret);
         cloudinary = new Cloudinary(config);
         return cloudinary;
+    }
+
+    @Bean
+    public AntPathMatcher antPathMatcher() {
+        return new AntPathMatcher();
     }
 }

@@ -2,6 +2,8 @@ package com.raven.api.model;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,11 +40,11 @@ public class PostComment {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "postComment")
-    private List<PostCommentUpvote> postCommentUpvotes;
+    @OneToMany(mappedBy = "postComment", orphanRemoval = true)
+    private Set<PostCommentUpvote> postCommentUpvotes;
 
-    @OneToMany(mappedBy = "postComment")
-    private List<PostCommentDownvote> postCommentDownvotes;
+    @OneToMany(mappedBy = "postComment", orphanRemoval = true)
+    private Set<PostCommentDownvote> postCommentDownvotes;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -57,16 +59,16 @@ public class PostComment {
                        final String comment, 
                        final Post post, 
                        final User user, 
-                       final List<PostCommentUpvote> postCommentUpvotes,
-                       final List<PostCommentDownvote> postCommentDownvotes,
+                       final Set<PostCommentUpvote> postCommentUpvotes,
+                       final Set<PostCommentDownvote> postCommentDownvotes,
                        final Timestamp createdAt, 
                        final Timestamp updatedAt) {
         this.id = id;
         this.comment = comment;
         this.post = post;
         this.user = user;
-        this.postCommentUpvotes = List.copyOf(postCommentUpvotes);
-        this.postCommentDownvotes = List.copyOf(postCommentDownvotes);
+        this.postCommentUpvotes = Set.copyOf(postCommentUpvotes);
+        this.postCommentDownvotes = Set.copyOf(postCommentDownvotes);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -83,6 +85,23 @@ public class PostComment {
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
             "}";
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof PostComment)) {
+            return false;
+        }
+        PostComment postComment = (PostComment) o;
+        return Objects.equals(id, postComment.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
 }

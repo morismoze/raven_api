@@ -1,8 +1,8 @@
 package com.raven.api.repository;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -17,6 +17,6 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Long> {
     Optional<Post> findByWebId(String webId);
 
     @Query(value = "SELECT p.postComments FROM Post p WHERE p.webId = ?1")
-    List<PostComment> findCommentsByWebId(String webid, Pageable pageable);
+    Page<PostComment> findCommentsByWebId(String webid, Pageable pageable);
 
 }

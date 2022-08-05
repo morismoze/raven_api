@@ -12,8 +12,10 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +29,7 @@ import com.raven.api.model.PostDownvote;
 import com.raven.api.model.PostUpvote;
 import com.raven.api.model.PostView;
 import com.raven.api.model.User;
+import com.raven.api.repository.PostCommentRepository;
 import com.raven.api.repository.PostRepository;
 import com.raven.api.service.CoverService;
 import com.raven.api.service.PostCommentService;
@@ -42,6 +45,8 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
 
+    private final PostCommentRepository postCommentRepository;
+
     private final PostCommentService postCommentService;
 
     private final CoverService coverService;
@@ -52,19 +57,18 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public String createPostByCoverUrl(User user, Post post, String coverUrl) {
+    public String createPostByCoverUrl(final User user, final Post post, final String coverUrl) {
         final Cover cover = this.coverService.createCover(post, coverUrl);
         final Post initPost = this.initializePost(post, user, cover);
   
         this.postRepository.save(initPost);
 
         return initPost.getWebId();
-        
     }
 
     @Override
     @Transactional
-    public String createPostByCoverFile(User user, Post post, MultipartFile multipartFile) {
+    public String createPostByCoverFile(final User user, final Post post, final MultipartFile multipartFile) {
         try {
             final String cloudinaryUrl = this.uploadToCloudinary(multipartFile);
             final Cover cover = this.coverService.createCover(post, cloudinaryUrl);
@@ -79,31 +83,31 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post getPost(String webId) {
+    public Post getPost(final String webId) {
         final Optional<Post> postOptional = this.postRepository.findByWebId(webId);
         
         if (postOptional.isEmpty()) {
-            throw new EntryNotFoundException(this.accessor.getMessage("post.notFound"));
+            throw new EntryNotFoundException(this.accessor.getMessage("post.notFound", new Object[]{webId}));
         }
 
         return postOptional.get();
     }
 
     @Override
-    public List<PostComment> getPageablePostComments(String webId, Integer page, Integer limit) {
-        final Pageable pageable = PageRequest.of(page, limit);
-        final List<PostComment> comments = this.postRepository.findCommentsByWebId(webId, pageable);
+    public Page<PostComment> getPageablePostComments(final String webId, final Integer page, final Integer limit) {
+        final Post post = this.getPost(webId);
+        final Page<PostComment> comments = this.postCommentService.getPageablePostComments(post, page, limit);
 
         return comments;
     }
 
     @Override
     @Transactional
-    public void createPostComment(String webId, User user, String comment) {
+    public void createPostComment(final String webId, final User user, final String comment) {
         final Optional<Post> postOptional = this.postRepository.findByWebId(webId);
         
         if (postOptional.isEmpty()) {
-            throw new EntryNotFoundException(this.accessor.getMessage("post.notFound"));
+            throw new EntryNotFoundException(this.accessor.getMessage("post.notFound", new Object[]{webId}));
         }
 
         final Post post = postOptional.get();
@@ -111,7 +115,7 @@ public class PostServiceImpl implements PostService {
         post.getPostComments().add(postComment);
     }
 
-    private String uploadToCloudinary(MultipartFile multipartFile) throws IOException {
+    private String uploadToCloudinary(final MultipartFile multipartFile) throws IOException {
         final File file = FileUtils.multipartToFile(multipartFile);
         final Map<String, String> options = new HashMap<>();
         options.put("folder", "raven_api_post_covers");
@@ -120,7 +124,7 @@ public class PostServiceImpl implements PostService {
         return result.get("url");
     }
 
-    private Post initializePost(Post post, User user, Cover cover) {
+    private Post initializePost(final Post post, final User user, final Cover cover) {
         final List<PostUpvote> postUpvotes = new ArrayList<>();
         final List<PostDownvote> postDownvotes = new ArrayList<>();
         final List<PostComment> postComments = new ArrayList<>();

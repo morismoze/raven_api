@@ -1,7 +1,6 @@
 package com.raven.api.service;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.raven.api.model.Post;
@@ -16,7 +15,7 @@ public interface PostService {
 
     Post getPost(String webId);
 
-    List<PostComment> getPageablePostComments(String webId, Integer page, Integer limit);
+    Page<PostComment> getPageablePostComments(String webId, Integer page, Integer limit);
 
     void createPostComment(String webId, User user, String comment);
 

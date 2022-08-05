@@ -370,4 +370,22 @@
             baseTableName="post_comment_downvote"/>
     </changeSet>
 
+    <changeSet id="20220805-00" author="mmoze">
+        <createIndex indexName="post_id_index" tableName="post">
+            <column name="id"/>
+        </createIndex>
+        <createIndex indexName="post_comment_id_index" tableName="post_comment">
+            <column name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20220805-01" author="mmoze">
+        <createIndex indexName="post_comment_upvote_id_index" tableName="post_comment_upvote">
+            <column name="id"/>
+        </createIndex>
+        <createIndex indexName="post_comment_downvote_id_index" tableName="post_comment_downvote">
+            <column name="id"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>

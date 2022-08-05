@@ -3,6 +3,7 @@ package com.raven.api.controller;
 import java.net.URI;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -27,6 +28,7 @@ import com.raven.api.request.PostRequestUrlDto;
 import com.raven.api.response.PostCommentsResponseDto;
 import com.raven.api.response.PostResponseDto;
 import com.raven.api.response.Response;
+import com.raven.api.service.PostCommentService;
 import com.raven.api.service.PostService;
 import com.raven.api.service.UserService;
 import com.raven.api.validation.PostCommentRequestDtoValidator;
@@ -43,6 +45,8 @@ public class PostController {
     private final PostService postService;
 
     private final UserService userService;
+
+    private final PostCommentService postCommentService;
 
     private final PostRequestUrlDtoValidator postRequestUrlDtoValidator;
 
@@ -97,8 +101,10 @@ public class PostController {
     @GetMapping("/{webId}/comments")
     public ResponseEntity<Response<?>> getPostComments(final @PathVariable String webId, final @RequestParam Integer page, 
         final @RequestParam Integer limit) {
-        List<PostComment> postComments = this.postService.getPageablePostComments(webId, page, limit);
-        PostCommentsResponseDto postCommentsResponseDto = this.postMapper.postCommentsPostCommentsResponseDtoMapper(0, postComments);
+        Page<PostComment> postComments = this.postService.getPageablePostComments(webId, page, limit);
+        Integer nextPage = postComments.hasNext() ? postComments.getPageable().getPageNumber() + 1 : null;
+        PostCommentsResponseDto postCommentsResponseDto = this.postMapper.postCommentsPostCommentsResponseDtoMapper(postComments.getTotalElements(), 
+        nextPage, postComments.getContent());
 
         return ResponseEntity.ok().body(Response.build(postCommentsResponseDto));
     }
@@ -117,6 +123,26 @@ public class PostController {
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "comments/create").toUriString());
         
         return ResponseEntity.created(uri).build();
+    }
+
+    @PostMapping("/{webId}/comments/{id}/upvote")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<Response<?>> upvotePostComment(final @PathVariable String webId, final @PathVariable Long id) {
+        final User currentUser = this.userService.findCurrent();
+        final Integer votes = this.postCommentService.upvotePostComment(id, currentUser);
+        final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "comments/" + id + "/upvote").toUriString());
+        
+        return ResponseEntity.created(uri).body(Response.build(votes));
+    }
+
+    @PostMapping("/{webId}/comments/{id}/downvote")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<Response<?>> downvotePostComment(final @PathVariable String webId, final @PathVariable Long id) {
+        final User currentUser = this.userService.findCurrent();
+        final Integer votes = this.postCommentService.downvotePostComment(id, currentUser);
+        final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "comments/" + id + "/downvote").toUriString());
+        
+        return ResponseEntity.created(uri).body(Response.build(votes));
     }
     
 }
