@@ -30,6 +30,10 @@ public class PostCommentResponseDto {
 
     private Integer votes;
 
+    private Boolean userPrincipalUpvoted;
+
+    private Boolean userPrincipalDownvoted;
+
     private Timestamp createdAt;
 
     private Timestamp updatedAt;

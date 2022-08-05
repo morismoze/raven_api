@@ -33,11 +33,51 @@ public interface PostCommentMapper {
         return postComment.getPostCommentUpvotes().size() - postComment.getPostCommentDownvotes().size();
     }
 
+    @Named("postCommentUpvotedByUserPrincipalMapper")
+    default boolean postCommentUpvotedByUserPrincipalMapper(Set<PostCommentUpvote> postCommentUpvotes) {
+        Optional<String> userPrincipalOptional = AuthUtils.getCurrentUserUsername();
+
+        if (userPrincipalOptional.isEmpty()) {
+            return false;
+        }
+
+        String userPrincipal = userPrincipalOptional.get();
+
+        for (PostCommentUpvote postCommentUpvote : postCommentUpvotes) {
+            if (postCommentUpvote.getUser().getUsername().equals(userPrincipal)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Named("postCommentDownvotedByUserPrincipalMapper")
+    default boolean postCommentDownvotedByUserPrincipalMapper(Set<PostCommentDownvote> postCommentDownvotes) {
+        Optional<String> userPrincipalOptional = AuthUtils.getCurrentUserUsername();
+
+        if (userPrincipalOptional.isEmpty()) {
+            return false;
+        }
+
+        String userPrincipal = userPrincipalOptional.get();
+
+        for (PostCommentDownvote postCommentDownvote : postCommentDownvotes) {
+            if (postCommentDownvote.getUser().getUsername().equals(userPrincipal)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "user.username", target = "username")
     @Mapping(source = "postCommentUpvotes", target = "upvotes", qualifiedByName = "postCommentUpvotesQuantityMapper")
     @Mapping(source = "postCommentDownvotes", target = "downvotes", qualifiedByName = "postCommentDownvotesQuantityMapper")
     @Mapping(source = ".", target = "votes", qualifiedByName = "postCommentVotesQuantityMapper")
+    @Mapping(source = "postCommentUpvotes", target = "userPrincipalUpvoted", qualifiedByName = "postCommentUpvotedByUserPrincipalMapper")
+    @Mapping(source = "postCommentDownvotes", target = "userPrincipalDownvoted", qualifiedByName = "postCommentDownvotedByUserPrincipalMapper")
     public PostCommentResponseDto postCommentPostCommentResponseDtoMapper(PostComment postComment);
 
 }

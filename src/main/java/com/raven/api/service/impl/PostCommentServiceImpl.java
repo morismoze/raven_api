@@ -68,12 +68,19 @@ public class PostCommentServiceImpl implements PostCommentService {
         
         final PostComment postComment = postCommentOptional.get();
         try {
-            PostCommentUpvote postCommentUpvote = this.postCommentUpvoteService.findByPostCommentIdAndUserId(id, user.getId());
+            final PostCommentUpvote postCommentUpvote = this.postCommentUpvoteService.findByPostCommentIdAndUserId(id, user.getId());
             this.postCommentUpvoteService.deleteById(postCommentUpvote.getId());
-            this.postCommentRepository.save(postComment);
             return postComment.getPostCommentUpvotes().size() - postComment.getPostCommentDownvotes().size();
-        } catch (EntryNotFoundException e) {
+        } catch (EntryNotFoundException entryNotFoundExceptionUpvote) {
             // user hasn't upvoted the comment, so create a new one
+
+            try {
+                PostCommentDownvote postCommentDownvote = this.postCommentDownvoteService.findByPostCommentIdAndUserId(id, user.getId());
+                this.postCommentDownvoteService.deleteById(postCommentDownvote.getId());
+            } catch (EntryNotFoundException entryNotFoundExceptionDownvote) {
+                // user hasn't downvoted the comment
+            }
+
             final PostCommentUpvote postCommentUpvote = this.postCommentUpvoteService.createNewPostCommentUpvote(postComment, user);
             postComment.getPostCommentUpvotes().add(postCommentUpvote);
             return postComment.getPostCommentDownvotes().size() - postComment.getPostCommentDownvotes().size();
@@ -91,14 +98,22 @@ public class PostCommentServiceImpl implements PostCommentService {
         
         final PostComment postComment = postCommentOptional.get();
         try {
-            PostCommentDownvote postCommentDownvote = this.postCommentDownvoteService.findByPostCommentIdAndUserId(id, user.getId());
+            final PostCommentDownvote postCommentDownvote = this.postCommentDownvoteService.findByPostCommentIdAndUserId(id, user.getId());
             this.postCommentDownvoteService.deleteById(postCommentDownvote.getId());
-            return postComment.getPostCommentDownvotes().size() - postComment.getPostCommentDownvotes().size();
-        } catch (EntryNotFoundException e) {
+            return postComment.getPostCommentUpvotes().size() - postComment.getPostCommentDownvotes().size();
+        } catch (EntryNotFoundException entryNotFoundExceptionDownvote) {
             // user hasn't downvoted the comment, so create a new one
+
+            try {
+                final PostCommentUpvote postCommentUpvote = this.postCommentUpvoteService.findByPostCommentIdAndUserId(id, user.getId());
+                this.postCommentUpvoteService.deleteById(postCommentUpvote.getId());
+            } catch (EntryNotFoundException entryNotFoundExceptionUpvote) {
+                // user hasn't upvoted the comment
+            }
+
             final PostCommentDownvote postCommentDownvote = this.postCommentDownvoteService.createNewPostCommentDownvote(postComment, user);
             postComment.getPostCommentDownvotes().add(postCommentDownvote);
-            return postComment.getPostCommentDownvotes().size() - postComment.getPostCommentDownvotes().size();
+            return postComment.getPostCommentUpvotes().size() - postComment.getPostCommentDownvotes().size();
         }         
     }
     

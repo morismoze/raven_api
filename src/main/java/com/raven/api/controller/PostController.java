@@ -103,8 +103,8 @@ public class PostController {
         final @RequestParam Integer limit) {
         Page<PostComment> postComments = this.postService.getPageablePostComments(webId, page, limit);
         Integer nextPage = postComments.hasNext() ? postComments.getPageable().getPageNumber() + 1 : null;
-        PostCommentsResponseDto postCommentsResponseDto = this.postMapper.postCommentsPostCommentsResponseDtoMapper(postComments.getTotalElements(), 
-        nextPage, postComments.getContent());
+        PostCommentsResponseDto postCommentsResponseDto = this.postMapper.postCommentsPostCommentsResponseDtoMapper(
+            postComments.getTotalElements(), nextPage, postComments.getContent());
 
         return ResponseEntity.ok().body(Response.build(postCommentsResponseDto));
     }
