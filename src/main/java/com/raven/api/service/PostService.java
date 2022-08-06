@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.raven.api.model.Post;
-import com.raven.api.model.PostComment;
 import com.raven.api.model.User;
 
 public interface PostService {
@@ -13,10 +12,12 @@ public interface PostService {
 
     String createPostByCoverFile(User user, Post post, MultipartFile file);
 
-    Post getPost(String webId);
+    Page<Post> findPageablePosts(Integer page, Integer limit);
 
-    Page<PostComment> getPageablePostComments(String webId, Integer page, Integer limit);
+    Post findByWebId(String webId);
 
-    void createPostComment(String webId, User user, String comment);
+    Integer upvotePost(String webId, User user);
+
+    Integer downvotePost(String webId, User user);
 
 }

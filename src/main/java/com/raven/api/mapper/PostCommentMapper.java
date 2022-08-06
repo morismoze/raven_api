@@ -1,5 +1,6 @@
 package com.raven.api.mapper;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import com.raven.api.model.PostComment;
 import com.raven.api.model.PostCommentDownvote;
 import com.raven.api.model.PostCommentUpvote;
 import com.raven.api.response.PostCommentResponseDto;
+import com.raven.api.response.PostCommentsResponseDto;
 import com.raven.api.security.jwt.AuthUtils;
 
 @Mapper(componentModel = "spring", uses = { PostCommentUpvoteMapper.class, PostCommentDownvoteMapper.class }, 
@@ -42,7 +44,6 @@ public interface PostCommentMapper {
         }
 
         String userPrincipal = userPrincipalOptional.get();
-
         for (PostCommentUpvote postCommentUpvote : postCommentUpvotes) {
             if (postCommentUpvote.getUser().getUsername().equals(userPrincipal)) {
                 return true;
@@ -61,7 +62,6 @@ public interface PostCommentMapper {
         }
 
         String userPrincipal = userPrincipalOptional.get();
-
         for (PostCommentDownvote postCommentDownvote : postCommentDownvotes) {
             if (postCommentDownvote.getUser().getUsername().equals(userPrincipal)) {
                 return true;
@@ -79,5 +79,8 @@ public interface PostCommentMapper {
     @Mapping(source = "postCommentUpvotes", target = "userPrincipalUpvoted", qualifiedByName = "postCommentUpvotedByUserPrincipalMapper")
     @Mapping(source = "postCommentDownvotes", target = "userPrincipalDownvoted", qualifiedByName = "postCommentDownvotedByUserPrincipalMapper")
     public PostCommentResponseDto postCommentPostCommentResponseDtoMapper(PostComment postComment);
+
+    @Mapping(source = "postComments", target = "comments")
+    PostCommentsResponseDto postCommentsPostCommentsResponseDtoMapper(Long count, Integer nextPage, List<PostComment> postComments);
 
 }

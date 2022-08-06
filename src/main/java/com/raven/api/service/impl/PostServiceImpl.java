@@ -29,11 +29,11 @@ import com.raven.api.model.PostDownvote;
 import com.raven.api.model.PostUpvote;
 import com.raven.api.model.PostView;
 import com.raven.api.model.User;
-import com.raven.api.repository.PostCommentRepository;
 import com.raven.api.repository.PostRepository;
 import com.raven.api.service.CoverService;
-import com.raven.api.service.PostCommentService;
+import com.raven.api.service.PostDownvoteService;
 import com.raven.api.service.PostService;
+import com.raven.api.service.PostUpvoteService;
 import com.raven.api.util.FileUtils;
 import com.raven.api.util.StringUtils;
 
@@ -43,11 +43,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
+    private final PostUpvoteService postUpvoteService;
+
+    private final PostDownvoteService postDownvoteService;
+
     private final PostRepository postRepository;
-
-    private final PostCommentRepository postCommentRepository;
-
-    private final PostCommentService postCommentService;
 
     private final CoverService coverService;
 
@@ -83,7 +83,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post getPost(final String webId) {
+    public Page<Post> findPageablePosts(Integer page, Integer limit) {
+        final Sort sort = Sort.by("createdAt");
+        final Pageable pageable = PageRequest.of(page, limit, sort);
+        
+        return this.postRepository.findAll(pageable);
+    }
+
+    @Override
+    public Post findByWebId(final String webId) {
         final Optional<Post> postOptional = this.postRepository.findByWebId(webId);
         
         if (postOptional.isEmpty()) {
@@ -94,25 +102,53 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<PostComment> getPageablePostComments(final String webId, final Integer page, final Integer limit) {
-        final Post post = this.getPost(webId);
-        final Page<PostComment> comments = this.postCommentService.getPageablePostComments(post, page, limit);
+    public Integer upvotePost(String webId, User user) {
+        final Post post = this.findByWebId(webId);
 
-        return comments;
+        try {
+            final PostUpvote postUpvote = this.postUpvoteService.findByPostIdAndUserId(post.getId(), user.getId());
+            // user upvoted already upvoted post, so remove the upvote
+            this.postUpvoteService.deleteById(postUpvote.getId());
+            return post.getPostUpvotes().size() - post.getPostDownvotes().size();
+        } catch (EntryNotFoundException entryNotFoundExceptionUpvote) {
+            // user hasn't upvoted the post, so create a new one
+            try {
+                PostDownvote postDownvote = this.postDownvoteService.findByPostIdAndUserId(post.getId(), user.getId());
+                // user prevously downvoted the post, so remove the downvote
+                this.postDownvoteService.deleteById(postDownvote.getId());
+            } catch (EntryNotFoundException entryNotFoundExceptionDownvote) {
+                // user hasn't previously downvoted the post
+            }
+
+            // create new upvote
+            this.postUpvoteService.createPostUpvote(post, user);
+            return post.getPostUpvotes().size() - post.getPostDownvotes().size();
+        }
     }
 
     @Override
-    @Transactional
-    public void createPostComment(final String webId, final User user, final String comment) {
-        final Optional<Post> postOptional = this.postRepository.findByWebId(webId);
-        
-        if (postOptional.isEmpty()) {
-            throw new EntryNotFoundException(this.accessor.getMessage("post.notFound", new Object[]{webId}));
-        }
+    public Integer downvotePost(String webId, User user) {
+        final Post post = this.findByWebId(webId);
 
-        final Post post = postOptional.get();
-        final PostComment postComment = this.postCommentService.createPostComment(post, user, comment);
-        post.getPostComments().add(postComment);
+        try {
+            final PostDownvote postdownvote = this.postDownvoteService.findByPostIdAndUserId(post.getId(), user.getId());
+            // user downvoted already downvoted post, so remove the downvote
+            this.postDownvoteService.deleteById(postdownvote.getId());
+            return post.getPostUpvotes().size() - post.getPostDownvotes().size();
+        } catch (EntryNotFoundException entryNotFoundExceptionUpvote) {
+            // user hasn't upvoted the post, so create a new one
+            try {
+                PostUpvote postUpvote = this.postUpvoteService.findByPostIdAndUserId(post.getId(), user.getId());
+                // user prevously upvoted the post, so remove the upvote
+                this.postUpvoteService.deleteById(postUpvote.getId());
+            } catch (EntryNotFoundException entryNotFoundExceptionDownvote) {
+                // user hasn't previously downvoted the post
+            }
+
+            // create new downvote
+            this.postDownvoteService.createPostDownvote(post, user);
+            return post.getPostUpvotes().size() - post.getPostDownvotes().size();
+        }
     }
 
     private String uploadToCloudinary(final MultipartFile multipartFile) throws IOException {

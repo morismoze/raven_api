@@ -16,37 +16,19 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class PostResponseDto {
+public class ReducedPostResponseDto {
 
     private String webId;
 
     private String title;
 
-    private String description;
-
     private boolean mature;
 
     private String coverUrl;
 
-    private String userId;
-
-    private String username;
-
-    private Boolean userPrincipalUpvoted;
-
-    private Boolean userPrincipalDownvoted;
-
-    private List<Tag> tags;
-
-    private Integer upvotes;
-
-    private Integer downvotes;
-
     private Integer votes;
 
+    private Integer comments;
+
     private Integer views;
-
-    private Timestamp createdAt;
-
-    private Timestamp updatedAt;
 }

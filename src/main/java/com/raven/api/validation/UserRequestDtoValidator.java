@@ -55,12 +55,13 @@ public class UserRequestDtoValidator implements Validator {
     
     private void checkEmail(final UserRequestDto user, final Errors errors) {
         ValidationUtils.rejectIfEmpty(errors, EMAIL, accessor.getMessage("user.email.empty"));
-        String email = user.getEmail();
+
+        final String email = user.getEmail();
         if (email != null) {
             if (!VALID_EMAIL_ADDRESS_REGEX.matcher(email).find())
             errors.rejectValue(EMAIL, accessor.getMessage("user.email.notValid"));
             try {
-                userService.findUserByEmail(email);
+                this.userService.findByEmail(email);
                 errors.rejectValue(EMAIL, accessor.getMessage("user.email.exists"));
             } catch (EntryNotFoundException e) {
                 // if exception was thrown - email doesn't exist - won't add to errors
@@ -70,10 +71,11 @@ public class UserRequestDtoValidator implements Validator {
     
     private void checkUsername(final UserRequestDto user, final Errors errors) {
         ValidationUtils.rejectIfEmpty(errors, EMAIL, accessor.getMessage("user.username.empty"));
-        String username = user.getUsername();
+        
+        final String username = user.getUsername();
         if (user.getUsername() != null) {
             try {
-                userService.findUserByUsername(username);
+                this.userService.findByUsername(username);
                 errors.rejectValue(USERNAME, accessor.getMessage("user.username.exists"));
             } catch (EntryNotFoundException e) {
                 // if exception was thrown - username doesn't exist - won't add to errors

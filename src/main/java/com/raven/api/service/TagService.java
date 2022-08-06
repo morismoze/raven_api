@@ -6,6 +6,6 @@ import com.raven.api.model.Tag;
 
 public interface TagService {
     
-    List<Tag> getAllTags();
+    List<Tag> findAll();
 
 }

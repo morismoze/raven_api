@@ -38,6 +38,18 @@ public class PostCommentServiceImpl implements PostCommentService {
     private final MessageSourceAccessor accessor;
 
     @Override
+    public PostComment getPostComment(Long id) {
+        final Optional<PostComment> postCommentOptional = this.postCommentRepository.findById(id);
+
+        if (postCommentOptional.isEmpty()) {
+            throw new EntryNotFoundException(this.accessor.getMessage("postComment.notFound", new Object[]{id}));
+        }
+        
+        return postCommentOptional.get();
+    }
+
+    @Override
+    @Transactional
     public PostComment createPostComment(final Post post, final User user, final String comment) {
         final PostComment postComment = new PostComment();
         
@@ -47,72 +59,68 @@ public class PostCommentServiceImpl implements PostCommentService {
         postComment.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         postComment.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
-        return this.postCommentRepository.save(postComment);
+        final PostComment savedPostComment = this.postCommentRepository.save(postComment);
+        post.getPostComments().add(savedPostComment);
+
+        return savedPostComment;
     }
 
     @Override
-    public Page<PostComment> getPageablePostComments(final Post post, final Integer page, final Integer limit) {
+    public Page<PostComment> findPageablePostComments(final Post post, final Integer page, final Integer limit) {
         final Sort sort = Sort.by("postCommentUpvotes").ascending().and(Sort.by("createdAt").descending());
         final Pageable pageable = PageRequest.of(page, limit, sort);
+        
         return this.postCommentRepository.findAllByPostId(post.getId(), pageable);
     }
 
     @Override
     @Transactional
     public Integer upvotePostComment(final Long id, final User user) {
-        final Optional<PostComment> postCommentOptional = this.postCommentRepository.findById(id);
+        final PostComment postComment = this.getPostComment(id);
 
-        if (postCommentOptional.isEmpty()) {
-            throw new EntryNotFoundException(this.accessor.getMessage("postComment.notFound", new Object[]{id}));
-        }
-        
-        final PostComment postComment = postCommentOptional.get();
         try {
             final PostCommentUpvote postCommentUpvote = this.postCommentUpvoteService.findByPostCommentIdAndUserId(id, user.getId());
+            // user upvoted already upvoted post comment, so remove the upvote
             this.postCommentUpvoteService.deleteById(postCommentUpvote.getId());
             return postComment.getPostCommentUpvotes().size() - postComment.getPostCommentDownvotes().size();
         } catch (EntryNotFoundException entryNotFoundExceptionUpvote) {
             // user hasn't upvoted the comment, so create a new one
-
             try {
                 PostCommentDownvote postCommentDownvote = this.postCommentDownvoteService.findByPostCommentIdAndUserId(id, user.getId());
+                // user prevously downvoted the post comment, so remove the downvote
                 this.postCommentDownvoteService.deleteById(postCommentDownvote.getId());
             } catch (EntryNotFoundException entryNotFoundExceptionDownvote) {
-                // user hasn't downvoted the comment
+                // user hasn't previously downvoted the comment
             }
 
-            final PostCommentUpvote postCommentUpvote = this.postCommentUpvoteService.createNewPostCommentUpvote(postComment, user);
-            postComment.getPostCommentUpvotes().add(postCommentUpvote);
-            return postComment.getPostCommentDownvotes().size() - postComment.getPostCommentDownvotes().size();
+            // create new upvote
+            this.postCommentUpvoteService.createPostCommentUpvote(postComment, user);
+            return postComment.getPostCommentUpvotes().size() - postComment.getPostCommentDownvotes().size();
         }
     }
 
     @Override
     @Transactional
     public Integer downvotePostComment(final Long id, final User user) {
-        final Optional<PostComment> postCommentOptional = this.postCommentRepository.findById(id);
+        final PostComment postComment = this.getPostComment(id);
 
-        if (postCommentOptional.isEmpty()) {
-            throw new EntryNotFoundException(this.accessor.getMessage("postComment.notFound", new Object[]{id}));
-        }
-        
-        final PostComment postComment = postCommentOptional.get();
         try {
             final PostCommentDownvote postCommentDownvote = this.postCommentDownvoteService.findByPostCommentIdAndUserId(id, user.getId());
+            // user downvoted already downvoted post comment, so remove the downvote
             this.postCommentDownvoteService.deleteById(postCommentDownvote.getId());
             return postComment.getPostCommentUpvotes().size() - postComment.getPostCommentDownvotes().size();
         } catch (EntryNotFoundException entryNotFoundExceptionDownvote) {
             // user hasn't downvoted the comment, so create a new one
-
             try {
                 final PostCommentUpvote postCommentUpvote = this.postCommentUpvoteService.findByPostCommentIdAndUserId(id, user.getId());
+                // user prevously upvoted the post comment, so remove the upvote
                 this.postCommentUpvoteService.deleteById(postCommentUpvote.getId());
             } catch (EntryNotFoundException entryNotFoundExceptionUpvote) {
-                // user hasn't upvoted the comment
+                // user hasn't previously upvoted the comment
             }
 
-            final PostCommentDownvote postCommentDownvote = this.postCommentDownvoteService.createNewPostCommentDownvote(postComment, user);
-            postComment.getPostCommentDownvotes().add(postCommentDownvote);
+            // create new downvote
+            this.postCommentDownvoteService.createPostCommentDownvote(postComment, user);
             return postComment.getPostCommentUpvotes().size() - postComment.getPostCommentDownvotes().size();
         }         
     }

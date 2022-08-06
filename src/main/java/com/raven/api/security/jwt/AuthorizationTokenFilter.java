@@ -55,9 +55,14 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
         "/logout",
         "/user/token/refresh",
         "/user/create",
-        "/post/*",
         "/tag/all"
     };
+
+    private final static String POST_UPVOTE_PATH = "/post/[a-zA-Z0-9]{12}/upvote";
+
+    private final static String POST_DOWNVOTE_PATH = "/post/[a-zA-Z0-9]{12}/downvote";
+
+    private final static String POST_COMMENTS_PATH = "/post/[a-zA-Z0-9]{12}/comments";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -86,7 +91,13 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
                 response.setHeader("error", "expired_access_token");
                 response.sendError(HttpStatus.UNAUTHORIZED.value());
             } catch (Exception e) {
-                throw new ServerErrorException(this.accessor.getMessage("server.error"));
+                if (request.getServletPath().matches(POST_COMMENTS_PATH)
+                    || request.getServletPath().matches(POST_UPVOTE_PATH)
+                    || request.getServletPath().matches(POST_DOWNVOTE_PATH)) {
+                    filterChain.doFilter(request, response);
+                } else {
+                    throw new ServerErrorException(this.accessor.getMessage("server.error"));
+                }
             }
         } else {
             throw new UnauthorizedException(this.accessor.getMessage("user.missingToken"));

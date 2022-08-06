@@ -10,7 +10,7 @@ import com.raven.api.service.PostCommentUpvoteService;
 @Service
 public interface PostCommentUpvoteService {
 
-    PostCommentUpvote createNewPostCommentUpvote(PostComment postComment, User user);
+    PostCommentUpvote createPostCommentUpvote(PostComment postComment, User user);
 
     PostCommentUpvote findByPostCommentIdAndUserId(Long postCommentId, Long userId);
 

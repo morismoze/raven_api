@@ -24,7 +24,7 @@ public class PostCommentDownvoteServiceImpl implements PostCommentDownvoteServic
     private final MessageSourceAccessor accessor;
 
     @Override
-    public PostCommentDownvote createNewPostCommentDownvote(PostComment postComment, User user) {
+    public PostCommentDownvote createPostCommentDownvote(PostComment postComment, User user) {
         final PostCommentDownvote postCommentDownvote = new PostCommentDownvote();
 
         postCommentDownvote.setPostComment(postComment);

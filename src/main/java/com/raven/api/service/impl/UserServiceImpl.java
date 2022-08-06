@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUser(final Long id) {
+    public User findById(final Long id) {
         final Optional<User> userOptional = this.userRepository.findById(id);
 
         if (userOptional.isEmpty()) {
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserByUsername(final String username) {
+    public User findByUsername(final String username) {
         final Optional<User> userOptional = this.userRepository.findByUsername(username);
 
         if (userOptional.isEmpty()) {
@@ -144,7 +144,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserByEmail(final String email) {
+    public User findByEmail(final String email) {
         final Optional<User> userOptional = this.userRepository.findByEmail(email);
 
         if (userOptional.isEmpty()) {
@@ -162,12 +162,12 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedException(accessor.getMessage("user.noLogin"));
         }
 
-        return this.findUserByUsername(usernameOptional.get());
+        return this.findByUsername(usernameOptional.get());
     }
 
     @Override
     @Transactional
-    public void deleteUserById(final Long id) {
+    public void deleteById(final Long id) {
         if (id == null) {
             throw new EntryNotFoundException(accessor.getMessage("user.id.empty"));
         }
@@ -186,7 +186,7 @@ public class UserServiceImpl implements UserService {
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refreshToken);
                 String username = decodedJWT.getSubject();
-                User user = this.findUserByUsername(username);
+                User user = this.findByUsername(username);
                 String accessToken = JWT.create()
                     .withSubject(user.getUsername())
                     .withExpiresAt(new Date(new Date().getTime() + this.accessTokenExpirationTimeMillis))

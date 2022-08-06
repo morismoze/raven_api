@@ -22,7 +22,7 @@ public class TagController {
 
     @GetMapping("/all")
     public ResponseEntity<Response<?>> getAllTags() {
-            List<Tag> tags = this.tagService.getAllTags();
+            final List<Tag> tags = this.tagService.findAll();
 
             return ResponseEntity.ok().body(Response.build(tags));
     }

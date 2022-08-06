@@ -92,7 +92,7 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 			.withExpiresAt(new Date(new Date().getTime() + this.refreshTokenExpirationTimeMillis))
 			.withIssuer(request.getRequestURL().toString())
 			.sign(algorithm);	
-		User user = this.userService.findUserByUsername(userPrincipal.getUsername());
+		User user = this.userService.findByUsername(userPrincipal.getUsername());
 		
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setHeader("access_token", accessToken);

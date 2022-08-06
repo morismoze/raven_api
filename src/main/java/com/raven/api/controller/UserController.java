@@ -40,8 +40,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity<Response<?>> getUser(@PathVariable final String id) {
-        final User user = this.userService.findUser(Long.parseLong(id));
+    public ResponseEntity<Response<?>> getUser(@PathVariable final Long id) {
+        final User user = this.userService.findById(id);
         final UserResponseDto userResponseDto = this.userMapper.userUserResponseDtoMapper(user);
 
         return ResponseEntity.ok().body(Response.build(userResponseDto));

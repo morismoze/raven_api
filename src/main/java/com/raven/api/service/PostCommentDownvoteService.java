@@ -10,7 +10,7 @@ import com.raven.api.service.PostCommentDownvoteService;
 @Service
 public interface PostCommentDownvoteService {
 
-    PostCommentDownvote createNewPostCommentDownvote(PostComment postComment, User user);
+    PostCommentDownvote createPostCommentDownvote(PostComment postComment, User user);
 
     PostCommentDownvote findByPostCommentIdAndUserId(Long postCommentId, Long userId);
 

@@ -25,7 +25,7 @@ public class PostCommentUpvoteServiceImpl implements PostCommentUpvoteService {
     private final MessageSourceAccessor accessor;
 
     @Override
-    public PostCommentUpvote createNewPostCommentUpvote(PostComment postComment, User user) {
+    public PostCommentUpvote createPostCommentUpvote(PostComment postComment, User user) {
         final PostCommentUpvote postCommentUpvote = new PostCommentUpvote();
 
         postCommentUpvote.setPostComment(postComment);

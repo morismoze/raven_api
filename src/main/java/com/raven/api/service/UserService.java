@@ -15,16 +15,16 @@ public interface UserService {
 
     User addRoleToUser(User user, RoleName roleName);
 
-    User findUser(Long id);
+    User findById(Long id);
 
-    User findUserByUsername(String username);
+    User findByUsername(String username);
 
-    User findUserByEmail(String email);
+    User findByEmail(String email);
 
     User findCurrent();
 
     void refreshToken(HttpServletRequest request, HttpServletResponse response);
 
-    void deleteUserById(Long id);
+    void deleteById(Long id);
 
 }
