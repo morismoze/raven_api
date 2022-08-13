@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.raven.api.mapper.TagMapper;
 import com.raven.api.model.Tag;
 import com.raven.api.response.Response;
+import com.raven.api.response.TagResponseDto;
 import com.raven.api.service.TagService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,11 +22,14 @@ public class TagController {
 
     private final TagService tagService;
 
+    private final TagMapper tagMapper;
+
     @GetMapping("/all")
     public ResponseEntity<Response<?>> getAllTags() {
             final List<Tag> tags = this.tagService.findAll();
+            final List<TagResponseDto> tagsResponseDto = this.tagMapper.tagsTagsResponseDtoMapper(tags);
 
-            return ResponseEntity.ok().body(Response.build(tags));
+            return ResponseEntity.ok().body(Response.build(tagsResponseDto));
     }
     
 }

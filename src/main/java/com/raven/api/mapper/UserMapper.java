@@ -7,7 +7,7 @@ import org.mapstruct.ReportingPolicy;
 import com.raven.api.model.User;
 import com.raven.api.request.UserRequestDto;
 
-@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
     UserResponseDto userUserResponseDtoMapper(User user);
