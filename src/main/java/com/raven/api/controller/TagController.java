@@ -11,6 +11,7 @@ import com.raven.api.mapper.TagMapper;
 import com.raven.api.model.Tag;
 import com.raven.api.response.Response;
 import com.raven.api.response.TagResponseDto;
+import com.raven.api.service.PostService;
 import com.raven.api.service.TagService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,14 @@ public class TagController {
 
     private final TagService tagService;
 
+    private final PostService postService;
+
     private final TagMapper tagMapper;
 
     @GetMapping("/all")
     public ResponseEntity<Response<?>> getAllTags() {
             final List<Tag> tags = this.tagService.findAll();
-            final List<TagResponseDto> tagsResponseDto = this.tagMapper.tagsTagsResponseDtoMapper(tags);
+            final List<TagResponseDto> tagsResponseDto = this.tagMapper.tagsTagsResponseDtoMapper(tags, this.postService);
 
             return ResponseEntity.ok().body(Response.build(tagsResponseDto));
     }

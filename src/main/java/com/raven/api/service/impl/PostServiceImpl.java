@@ -84,7 +84,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> findPageablePosts(Integer page, Integer limit) {
-        final Sort sort = Sort.by("createdAt");
+        final Sort sort = Sort.by("createdAt").descending();
         final Pageable pageable = PageRequest.of(page, limit, sort);
         
         return this.postRepository.findAll(pageable);
@@ -149,6 +149,12 @@ public class PostServiceImpl implements PostService {
             this.postDownvoteService.createPostDownvote(post, user);
             return post.getPostUpvotes().size() - post.getPostDownvotes().size();
         }
+    }
+
+    @Override
+    public Integer countPostsByTag(Long tagId) {
+        System.out.println("OVDJEEEEE: "+this.postRepository.countByTags_Id(tagId));
+        return this.postRepository.countByTags_Id(tagId);
     }
 
     private String uploadToCloudinary(final MultipartFile multipartFile) throws IOException {

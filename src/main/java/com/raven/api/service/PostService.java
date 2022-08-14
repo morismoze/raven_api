@@ -20,4 +20,6 @@ public interface PostService {
 
     Integer downvotePost(String webId, User user);
 
+    Integer countPostsByTag(Long tagId);
+
 }
