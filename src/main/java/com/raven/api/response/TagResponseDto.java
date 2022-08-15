@@ -17,6 +17,8 @@ public class TagResponseDto {
 
     private String tagName;
 
+    private String tagDisplayName;
+
     private Integer posts;
 
 }

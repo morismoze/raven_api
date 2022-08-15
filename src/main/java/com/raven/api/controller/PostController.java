@@ -26,6 +26,7 @@ import com.raven.api.model.User;
 import com.raven.api.request.PostCommentRequestDto;
 import com.raven.api.request.PostRequestFileDto;
 import com.raven.api.request.PostRequestUrlDto;
+import com.raven.api.response.NewestPostResponseDto;
 import com.raven.api.response.PostCommentsResponseDto;
 import com.raven.api.response.PostResponseDto;
 import com.raven.api.response.PostsResponseDto;
@@ -110,6 +111,14 @@ public class PostController {
         final PostResponseDto postResponseDto = this.postMapper.postPostResponseDtoMapper(post);
 
         return ResponseEntity.ok().body(Response.build(postResponseDto));
+    }
+
+    @GetMapping("/newest")
+    public ResponseEntity<Response<?>> getNewestTop20Posts() {
+        final List<Post> posts = this.postService.findTop20NewestPosts();
+        final List<NewestPostResponseDto> postsReponseDto = this.postMapper.postsNewestPostsResponseDtoMapper(posts);
+
+        return ResponseEntity.ok().body(Response.build(postsReponseDto));
     }
 
     @PostMapping("/{webId}/upvote")

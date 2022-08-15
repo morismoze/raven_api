@@ -1,5 +1,7 @@
 package com.raven.api.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +17,8 @@ public interface PostService {
     Page<Post> findPageablePosts(Integer page, Integer limit);
 
     Post findByWebId(String webId);
+
+    List<Post> findTop20NewestPosts();
 
     Integer upvotePost(String webId, User user);
 

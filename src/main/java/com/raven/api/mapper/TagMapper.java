@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -17,19 +18,29 @@ import com.raven.api.service.PostService;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TagMapper {
 
-    @Named("tagNameMapper")
-    default String tagNameMapper(Tag tag) {
+    @Named("tagDisplayNameMapper")
+    default String tagDisplayNameMapper(Tag tag) {
         return tag.getTagName().name().replace("_", " ");
     }
+
+    @Mapping(source = ".", target = "tagDisplayName", qualifiedByName = "tagDisplayNameMapper")
+    @Named("tagsPostTagsMapper")
+    TagResponseDto tagPostTagResponseDtoMapper(Tag tag);
+
+    @Mapping(target = "posts", ignore = true)
+    @IterableMapping(qualifiedByName = "tagsPostTagsMapper")
+    List<TagResponseDto> tagsPostTagsResponseDtoMapper(List<Tag> tags);
 
     @AfterMapping
     default void tagTagResponseDtoMapper( @MappingTarget TagResponseDto target, Tag tag, @Context PostService postService) {
         target.setPosts(postService.countPostsByTag(tag.getId()));
     }
 
-    @Mapping(source = ".", target = "tagName", qualifiedByName = "tagNameMapper")
+    @Mapping(source = ".", target = "tagDisplayName", qualifiedByName = "tagDisplayNameMapper")
+    @Named("tagsTagsMapper")
     TagResponseDto tagTagResponseDtoMapper(Tag tag, @Context PostService postService);
 
+    @IterableMapping(qualifiedByName = "tagsTagsMapper")
     List<TagResponseDto> tagsTagsResponseDtoMapper(List<Tag> tags, @Context PostService postService);
     
 }

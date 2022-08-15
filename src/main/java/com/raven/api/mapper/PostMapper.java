@@ -20,12 +20,13 @@ import com.raven.api.model.PostView;
 import com.raven.api.model.Tag;
 import com.raven.api.request.PostRequestFileDto;
 import com.raven.api.request.PostRequestUrlDto;
+import com.raven.api.response.NewestPostResponseDto;
 import com.raven.api.response.PostResponseDto;
 import com.raven.api.response.PostsResponseDto;
 import com.raven.api.response.ReducedPostResponseDto;
 import com.raven.api.security.jwt.AuthUtils;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", uses = { TagMapper.class },  unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PostMapper {
 
     @Named("postVotesMapper")
@@ -71,7 +72,6 @@ public interface PostMapper {
         String userPrincipal = userPrincipalOptional.get();
         for (PostUpvote postUpvote : postUpvotes) {
             if (postUpvote.getUser().getUsername().equals(userPrincipal)) {
-                System.out.println("NASO");
                 return true;
             }
         }
@@ -125,5 +125,10 @@ public interface PostMapper {
     @Mapping(source = ".", target = "votes", qualifiedByName = "postVotesMapper")
     @Mapping(source = "postViews", target = "views", qualifiedByName = "postViewsMapper")
     PostResponseDto postPostResponseDtoMapper(Post post);
+    
+    @Mapping(source = "cover.url", target = "coverUrl")
+    NewestPostResponseDto postNewestPostResponseDtoMapper(Post post);
+
+    List<NewestPostResponseDto> postsNewestPostsResponseDtoMapper(List<Post> posts);
     
 }

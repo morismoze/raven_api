@@ -102,6 +102,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> findTop20NewestPosts() {
+        return this.postRepository.findTop20ByOrderByCreatedAtDesc();
+    }
+
+    @Override
     public Integer upvotePost(String webId, User user) {
         final Post post = this.findByWebId(webId);
 
@@ -153,7 +158,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Integer countPostsByTag(Long tagId) {
-        System.out.println("OVDJEEEEE: "+this.postRepository.countByTags_Id(tagId));
         return this.postRepository.countByTags_Id(tagId);
     }
 

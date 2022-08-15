@@ -18,7 +18,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> findAll() {
-        return this.tagRepository.findAll();
+        return this.tagRepository.findAllByOrderByTagNameAsc();
     }
     
 }
