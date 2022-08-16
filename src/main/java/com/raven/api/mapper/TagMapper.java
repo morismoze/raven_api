@@ -18,6 +18,10 @@ import com.raven.api.service.PostService;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TagMapper {
 
+    Tag tagResponseDtoTagMapper(TagResponseDto tagResponseDto);
+
+    List<Tag> tagsResponseDtoTagsMapper(List<TagResponseDto> tagsResponseDto);
+
     @Named("tagDisplayNameMapper")
     default String tagDisplayNameMapper(Tag tag) {
         return tag.getTagName().name().replace("_", " ");

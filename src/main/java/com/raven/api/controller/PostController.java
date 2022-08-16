@@ -82,7 +82,8 @@ public class PostController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<Response<?>> createPostByCoverFile(final @ModelAttribute PostRequestFileDto postRequestFileDto, 
         final BindingResult errors) {
-        this.postRequestFileDtoValidator.validate(postRequestFileDto, errors);
+        try {
+            this.postRequestFileDtoValidator.validate(postRequestFileDto, errors);
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(Response.build(errors));
         }
@@ -91,8 +92,12 @@ public class PostController {
         final Post post = this.postMapper.postPostRequestFileDtoMapper(postRequestFileDto);
         final String webId = this.postService.createPostByCoverFile(currentUser, post, postRequestFileDto.getFile());
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/file/create").toUriString());
-        
         return ResponseEntity.created(uri).body(Response.build(webId));
+        
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @GetMapping("/all")

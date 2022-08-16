@@ -24,6 +24,7 @@ import com.raven.api.response.NewestPostResponseDto;
 import com.raven.api.response.PostResponseDto;
 import com.raven.api.response.PostsResponseDto;
 import com.raven.api.response.ReducedPostResponseDto;
+import com.raven.api.response.TagResponseDto;
 import com.raven.api.security.jwt.AuthUtils;
 
 @Mapper(componentModel = "spring", uses = { TagMapper.class },  unmappedTargetPolicy = ReportingPolicy.IGNORE)
@@ -50,11 +51,11 @@ public interface PostMapper {
     Post postPostRequestUrlDtoMapper(PostRequestUrlDto postRequestUrlDto);
 
     @Named("tagsMapper")
-    default List<Tag> tagsMapper(String tagsString) {
+    default List<TagResponseDto> tagsMapper(String tagsString) {
         ObjectMapper objectMapper = new ObjectMapper();
         TypeFactory typeFactory = objectMapper.getTypeFactory();
         try {
-            List<Tag> tags = objectMapper.readValue(tagsString, typeFactory.constructCollectionType(List.class, Tag.class));
+            List<TagResponseDto> tags = objectMapper.readValue(tagsString, typeFactory.constructCollectionType(List.class, TagResponseDto.class));
             return tags;
         } catch (JsonProcessingException e) {
             throw new ServerErrorException("The application has encountered an unexpected error");
