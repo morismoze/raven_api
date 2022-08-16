@@ -1,0 +1,21 @@
+spring:
+  liquibase:
+    enabled: true
+    change-log: classpath:liquibase-changelog-master.xml
+    contexts: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/raven_db
+    username: postgres
+    password: admin
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  messages:
+    basename: messages
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB

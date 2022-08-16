@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: dev
+  messages:
+    basename: messages
+
+server:
+  error:
+    include-message: always
+    include-stacktrace: never
+  port: 8080
+  servlet:
+    context-path: /api
+
+jwt:
+  secret: sR/RzaBu72M26o5S1Iun/g==
+  claim: roles
+  access-token-expiration-time-millis: 5400000
+  refresh-token-expiration-time-millis: 2592000000
+
+cloudinary:
+  api-key: 436667233368642
+  secret: Jg3uo9cu2kRil9bKeIayNLWaMC4

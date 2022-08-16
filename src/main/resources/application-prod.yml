@@ -1,0 +1,21 @@
+spring:
+  liquibase:
+    enabled: true
+    change-log: classpath:liquibase-changelog-master.xml
+    contexts: prod
+  datasource:
+    url: ${DATABASE_URL}
+    username: postgres
+    password: admin
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  messages:
+    basename: messages
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
