@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.stream;
 
@@ -56,7 +55,8 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
         "/user/token/refresh",
         "/user/create",
         "/tag/all",
-        "/post/all"
+        "/post/all",
+        "/post/newest"
     };
 
     private final static String POST_PATH = "/post/[a-zA-Z0-9]{12}";
