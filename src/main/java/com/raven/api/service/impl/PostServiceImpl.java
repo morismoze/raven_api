@@ -29,6 +29,7 @@ import com.raven.api.model.PostDownvote;
 import com.raven.api.model.PostUpvote;
 import com.raven.api.model.PostView;
 import com.raven.api.model.User;
+import com.raven.api.model.enums.TagName;
 import com.raven.api.repository.PostRepository;
 import com.raven.api.service.CoverService;
 import com.raven.api.service.PostDownvoteService;
@@ -91,6 +92,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> findPageablePostsByTagName(String tagName, Integer page, Integer limit) {
+        final Sort sort = Sort.by("createdAt").descending();
+        final Pageable pageable = PageRequest.of(page, limit, sort);
+        
+        return this.postRepository.findAllByTags_TagName(TagName.valueOf(tagName), pageable);
+    }
+
+    @Override
+    public List<Post> findTop20NewestPosts() {
+        return this.postRepository.findTop20ByOrderByCreatedAtDesc();
+    }
+
+    @Override
     public Post findByWebId(final String webId) {
         final Optional<Post> postOptional = this.postRepository.findByWebId(webId);
         
@@ -101,10 +115,6 @@ public class PostServiceImpl implements PostService {
         return postOptional.get();
     }
 
-    @Override
-    public List<Post> findTop20NewestPosts() {
-        return this.postRepository.findTop20ByOrderByCreatedAtDesc();
-    }
 
     @Override
     public Integer upvotePost(String webId, User user) {

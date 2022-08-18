@@ -16,9 +16,11 @@ public interface PostService {
 
     Page<Post> findPageablePosts(Integer page, Integer limit);
 
-    Post findByWebId(String webId);
-
+    Page<Post> findPageablePostsByTagName(String tagName, Integer page, Integer limit);
+    
     List<Post> findTop20NewestPosts();
+    
+    Post findByWebId(String webId);
 
     Integer upvotePost(String webId, User user);
 

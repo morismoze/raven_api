@@ -100,7 +100,7 @@ public class PostController {
         return null;
     }
 
-    @GetMapping("/all")
+    @GetMapping(value = "/all", params = { "page", "limit" })
     public ResponseEntity<Response<?>> getAllPosts(final @RequestParam Integer page, final @RequestParam Integer limit) {
         final Page<Post> posts = this.postService.findPageablePosts(page, limit);
         final Integer nextPage = posts.hasNext() ? posts.getPageable().getPageNumber() + 1 : null;
@@ -110,10 +110,13 @@ public class PostController {
         return ResponseEntity.ok().body(Response.build(postResponseDto));
     }
 
-    @GetMapping("/{webId}")
-    public ResponseEntity<Response<?>> getPost(final @PathVariable String webId) {
-        final Post post = this.postService.findByWebId(webId);
-        final PostResponseDto postResponseDto = this.postMapper.postPostResponseDtoMapper(post);
+    @GetMapping(value = "/all", params = { "tagName", "page", "limit" })
+    public ResponseEntity<Response<?>> findAllPostsByTagName(final @RequestParam String tagName, final @RequestParam Integer page, 
+        final @RequestParam Integer limit) {
+        final Page<Post> posts = this.postService.findPageablePostsByTagName(tagName, page, limit);
+        final Integer nextPage = posts.hasNext() ? posts.getPageable().getPageNumber() + 1 : null;
+        final PostsResponseDto postResponseDto = this.postMapper.postsPostsResponseDtoMapper(posts.getTotalElements(),
+            nextPage, posts.getContent());
 
         return ResponseEntity.ok().body(Response.build(postResponseDto));
     }
@@ -125,6 +128,15 @@ public class PostController {
 
         return ResponseEntity.ok().body(Response.build(postsReponseDto));
     }
+
+    @GetMapping("/{webId}")
+    public ResponseEntity<Response<?>> getPost(final @PathVariable String webId) {
+        final Post post = this.postService.findByWebId(webId);
+        final PostResponseDto postResponseDto = this.postMapper.postPostResponseDtoMapper(post);
+
+        return ResponseEntity.ok().body(Response.build(postResponseDto));
+    }
+
 
     @PostMapping("/{webId}/upvote")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
