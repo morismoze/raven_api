@@ -3,6 +3,7 @@ package com.raven.api.response;
 public class FieldError {
 
     private String field;
+    
     private String error;
 
     public FieldError(final String field, final String error) {

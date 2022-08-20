@@ -1,12 +1,16 @@
 package com.raven.api.validation;
 
+import java.io.IOException;
+
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import com.raven.api.exception.ServerErrorException;
 import com.raven.api.request.PostRequestFileDto;
+import com.raven.api.util.CoverUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +22,7 @@ public class PostRequestFileDtoValidator implements Validator {
 
     private static final String DESCRIPTION = "description";
 
-    private static final String BYTES = "fileBytes";
+    private static final String FILE = "file";
 
     private static final String TAGS = "tags";
 
@@ -35,15 +39,19 @@ public class PostRequestFileDtoValidator implements Validator {
     public void validate(Object target, Errors errors) {
         ValidationUtils.rejectIfEmpty(errors, TITLE, accessor.getMessage("post.title.empty"));
         ValidationUtils.rejectIfEmpty(errors, DESCRIPTION, accessor.getMessage("post.description.empty"));
-        //ValidationUtils.rejectIfEmpty(errors, BYTES, accessor.getMessage("post.cover.file.empty"));
+        ValidationUtils.rejectIfEmpty(errors, FILE, accessor.getMessage("post.cover.file.empty"));
         ValidationUtils.rejectIfEmpty(errors, TAGS, accessor.getMessage("post.tags.empty"));
         ValidationUtils.rejectIfEmpty(errors, MATURE, accessor.getMessage("post.mature.empty"));
         
         final PostRequestFileDto postRequestFileDto = (PostRequestFileDto) target;
 
-        /* if (!CoverUtils.isImage(postRequestFileDto.getFileBytes())) {
-            errors.rejectValue(BYTES, accessor.getMessage("post.cover.notValid"));
-        } */
+        try {
+            if (!CoverUtils.isImage(postRequestFileDto.getFile().getBytes())) {
+                errors.rejectValue(FILE, this.accessor.getMessage("post.cover.notValid"));
+            }
+        } catch (IOException e) {
+            throw new ServerErrorException(this.accessor.getMessage("server.error"));
+        }
     }
     
 }

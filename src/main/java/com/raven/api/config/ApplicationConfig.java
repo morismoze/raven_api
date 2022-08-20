@@ -45,4 +45,5 @@ public class ApplicationConfig {
     public AntPathMatcher antPathMatcher() {
         return new AntPathMatcher();
     }
+    
 }

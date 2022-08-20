@@ -6,10 +6,8 @@ import org.springframework.stereotype.Service;
 import com.raven.api.exception.EntryNotFoundException;
 import com.raven.api.model.Post;
 import com.raven.api.model.PostDownvote;
-import com.raven.api.model.PostUpvote;
 import com.raven.api.model.User;
 import com.raven.api.repository.PostDownvoteRepository;
-import com.raven.api.repository.PostUpvoteRepository;
 import com.raven.api.service.PostDownvoteService;
 
 import java.sql.Timestamp;

@@ -17,7 +17,6 @@ import com.raven.api.model.PostComment;
 import com.raven.api.model.PostDownvote;
 import com.raven.api.model.PostUpvote;
 import com.raven.api.model.PostView;
-import com.raven.api.model.Tag;
 import com.raven.api.request.PostRequestFileDto;
 import com.raven.api.request.PostRequestUrlDto;
 import com.raven.api.response.NewestPostResponseDto;

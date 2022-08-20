@@ -1,10 +1,5 @@
 package com.raven.api.response;
 
-import java.sql.Timestamp;
-import java.util.List;
-
-import com.raven.api.model.Tag;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,4 +26,5 @@ public class ReducedPostResponseDto {
     private Integer comments;
 
     private Integer views;
+    
 }

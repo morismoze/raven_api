@@ -83,5 +83,4 @@ public class PostCommentUpvote {
         return Objects.hash(id, postComment, user);
     }
 
-
 }

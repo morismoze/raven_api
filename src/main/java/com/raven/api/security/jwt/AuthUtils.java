@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public final class AuthUtils {
+
     public static Optional<String> getCurrentUserUsername() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));
@@ -25,4 +26,5 @@ public final class AuthUtils {
         
         return null;
     }
+    
 }

@@ -1,13 +1,9 @@
 package com.raven.api.request;
 
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.web.multipart.MultipartFile;
-
-import com.raven.api.model.Tag;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -8,7 +8,6 @@ import com.raven.api.model.PostCommentUpvote;
 
 public interface PostCommentUpvoteRepository extends JpaRepository<PostCommentUpvote, Long> {
 
-    
     Optional<PostCommentUpvote> findByPostCommentIdAndUserId(Long postCommentId, Long userId);
     
 }

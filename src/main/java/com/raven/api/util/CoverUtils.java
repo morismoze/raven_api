@@ -18,24 +18,18 @@ public class CoverUtils {
         }
     }
 
-    public static boolean isImage(final String base64) {
-
-        if (!base64.split(",")[0].contains("image")) {
-            return false;
-        }
+    public static boolean isImage(final byte[] bytes) {
         try {
-            decoder.decode(base64);
-        } catch (final IllegalArgumentException iae) {
+            decoder.decode(bytes);
+            return true;
+        } catch (IllegalArgumentException iae) {
             return false;
         }
-        return true;
     }
 
     public static boolean isValidUrl(final String coverUrl) {
-
-        final URL url;
         try {
-            url = new URL(coverUrl);
+            final URL url = new URL(coverUrl);
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod("HEAD");
             http.connect();
@@ -44,10 +38,8 @@ public class CoverUtils {
             }
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
             return false;
         }
-        
     }
     
 }
