@@ -18,6 +18,9 @@ public class User {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "activated")
+    private boolean activated;
+
     @Column(nullable = false, name = "first_name")
     private String firstName;
 
@@ -32,6 +35,9 @@ public class User {
 
     @Column(nullable = false, unique = true, name = "username")
     private String username;
+
+    @OneToOne(mappedBy = "user")
+    private VerificationToken verificationToken;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
@@ -70,11 +76,13 @@ public class User {
     }
 
     public User(final Long id, 
+                final boolean activated,
                 final String firstName, 
                 final String lastName, 
                 final String email, 
                 final String password, 
                 final String username, 
+                final VerificationToken verificationToken,
                 final List<Role> roles, 
                 final List<Post> posts, 
                 final List<PostView> postViews, 
@@ -86,11 +94,13 @@ public class User {
                 final Timestamp createdAt, 
                 final Timestamp updatedAt) {
         this.id = id;
+        this.activated = activated;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.username = username;
+        this.verificationToken = verificationToken;
         this.roles = List.copyOf(roles);
         this.posts = List.copyOf(posts);
         this.postViews = List.copyOf(postViews);
@@ -107,11 +117,13 @@ public class User {
     public String toString() {
         return "{" +
             " id='" + getId() + "'" +
+            ", ativated='" + isActivated() + "'" +
             ", firstName='" + getFirstName() + "'" +
             ", lastName='" + getLastName() + "'" +
             ", email='" + getEmail() + "'" +
             ", password='" + getPassword() + "'" +
             ", username='" + getUsername() + "'" +
+            ", verificationToken='" + getVerificationToken() + "'" +
             ", roles='" + getRoles() + "'" +
             ", posts='" + getPosts() + "'" +
             ", postViews='" + getPostViews() + "'" +

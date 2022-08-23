@@ -27,6 +27,7 @@ ext {
 	jacksonDatatypeVersion = "2.3.0-rc1"
 	apacheCommonsVersion = "3.0"
 	cloudinaryVersion = "1.0.2"
+	springMailVersion = "1.2.0.RELEASE"
 }
 
 dependencies {
@@ -41,6 +42,7 @@ dependencies {
 	implementation group: "com.fasterxml.jackson.datatype", name: "jackson-datatype-jsr310", version: "${jacksonDatatypeVersion}"
 	implementation "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
 	implementation "com.cloudinary:cloudinary:${cloudinaryVersion}"
+	implementation "org.springframework.boot:spring-boot-starter-mail:${springMailVersion}"
 	developmentOnly "org.springframework.boot:spring-boot-devtools"
 	runtimeOnly "org.postgresql:postgresql"
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"

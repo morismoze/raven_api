@@ -388,4 +388,30 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="20220823-00" author="mmoze">
+        <addColumn tableName="user">
+            <column name="activated" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20220823-01" author="mmoze">
+        <createTable tableName="verification_token">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_verification_token_id"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="fk_verification_token_user_id" references="user(id)"/>
+            </column>
+            <column name="uuid_code" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

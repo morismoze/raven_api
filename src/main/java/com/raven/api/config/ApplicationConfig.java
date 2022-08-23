@@ -25,7 +25,7 @@ public class ApplicationConfig {
     public MessageSourceAccessor messageSourceAccessor() {
         final ReloadableResourceBundleMessageSource messageSource
                 = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasenames("classpath:messages");
+        messageSource.setBasenames("classpath:messages", "classpath:mail");
         messageSource.setDefaultEncoding("UTF-8");
         return new MessageSourceAccessor(messageSource);
     }

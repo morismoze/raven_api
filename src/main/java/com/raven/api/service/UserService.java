@@ -11,6 +11,8 @@ public interface UserService {
 
     User createUser(User user, RoleName roleName);
 
+    void activate(String uuid);
+
     Role findRole(RoleName roleName);
 
     User addRoleToUser(User user, RoleName roleName);

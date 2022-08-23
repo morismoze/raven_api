@@ -54,14 +54,17 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
         "/logout",
         "/user/token/refresh",
         "/user/create",
+        "/user/activate",
         "/tag/all",
         "/post/all",
         "/post/newest"
     };
 
-    private final static String POST_PATH = "/post/[a-zA-Z0-9]{12}";
+    // any number (+) because otherwise it will throw 401 and not 404
+    private final static String POST_PATH = "/post/[a-zA-Z0-9]+";
 
-    private final static String POST_COMMENTS_PATH = "/post/[a-zA-Z0-9]{12}/comments";
+    // any number (+) because otherwise it will throw 401 and not 404
+    private final static String POST_COMMENTS_PATH = "/post/[a-zA-Z0-9]+/comments";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

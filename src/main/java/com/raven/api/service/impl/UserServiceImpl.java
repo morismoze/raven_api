@@ -17,10 +17,13 @@ import com.raven.api.model.PostUpvote;
 import com.raven.api.model.PostView;
 import com.raven.api.model.Role;
 import com.raven.api.model.User;
+import com.raven.api.model.VerificationToken;
 import com.raven.api.model.enums.RoleName;
 import com.raven.api.repository.RoleRepository;
 import com.raven.api.repository.UserRepository;
+import com.raven.api.repository.VerificationTokenRepository;
 import com.raven.api.security.jwt.AuthUtils;
+import com.raven.api.service.EmailService;
 import com.raven.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -38,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +55,10 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
+
+    private final VerificationTokenRepository verificationTokenRepository;
+
+    private final EmailService emailService;
     
     private final MessageSourceAccessor accessor;
 
@@ -67,6 +75,24 @@ public class UserServiceImpl implements UserService {
     @Value(value = "${jwt.access-token-expiration-time-millis}")
 	private Long accessTokenExpirationTimeMillis;
 
+    @Value(value = "${content.type.plaintext}")
+	private String mailContentType;
+
+    @Value(value = "${mail.username}")
+	private String mailUsername;
+
+    @Value(value = "${mail.password}")
+	private String mailPassword;
+
+    @Value(value = "${mail.activation-message.subject}")
+	private String mailActivationMessageSubject;
+
+    @Value(value = "${mail.activation-message.body}")
+	private String mailActivationMessageBody;
+
+    @Value(value = "${frontend.origin}")
+	private String frontendOrigin;
+
     @Override
     @Transactional
     public User createUser(final User user, final RoleName roleName) {
@@ -80,6 +106,7 @@ public class UserServiceImpl implements UserService {
         final List<PostView> postViews = new ArrayList<>();
         final String plainPassword = user.getPassword();
 
+        user.setActivated(false);
         user.setPassword(passwordEncoder.encode(plainPassword));
         roles.add(findRole(roleName));
         user.setRoles(roles);
@@ -92,8 +119,36 @@ public class UserServiceImpl implements UserService {
         user.setPostViews(postViews);
         user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        User savedUser = this.userRepository.save(user);
 
-        return this.userRepository.save(user);
+        final String uuid = UUID.randomUUID().toString();
+        final VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setUser(savedUser);
+        verificationToken.setUuidCode(uuid);
+        verificationToken.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        verificationToken.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        verificationTokenRepository.save(verificationToken);
+
+        this.emailService.sendMessage(savedUser.getEmail(), this.mailActivationMessageSubject, 
+        this.mailActivationMessageBody + "\n" + this.frontendOrigin + "/activate?uuid=" + uuid, this.mailContentType);
+
+        return savedUser;
+    }
+
+    @Override
+    @Transactional
+    public void activate(final String uuid) {
+        final Optional<VerificationToken> verificationTokenOptional = this.verificationTokenRepository.findByUuidCode(uuid);
+        if (verificationTokenOptional.isEmpty()) {
+            throw new EntryNotFoundException(this.accessor.getMessage("verificationToken.notFound"));
+        }
+
+        final User user = verificationTokenOptional.get().getUser();
+        user.setActivated(true);
+        user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        this.userRepository.save(user);
+
+        this.verificationTokenRepository.delete(verificationTokenOptional.get());
     }
 
     @Override
