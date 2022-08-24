@@ -9,6 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 public class ApiApplication {
 
 	public static void main(String[] args) {
+		System.out.println(System.getenv("MAIL_USERNAME"));
 		SpringApplication.run(ApiApplication.class, args);
 	}
 

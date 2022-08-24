@@ -9,6 +9,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -34,25 +37,29 @@ import com.raven.api.response.Response;
 import com.raven.api.response.UserResponseDto;
 import com.raven.api.service.UserService;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFilter {
 
 	private AuthenticationManager authenticationManager;
 
+	@Autowired
 	private UserService userService;
 
+	@Autowired
 	private UserMapper userMapper;
 	
+	@Autowired
 	private MessageSourceAccessor accessor;
     
+	@Value(value = "${jwt.secret}")
 	private String secret;
 
+	@Value(value = "${jwt.claim}")
 	private String claim;
 
+	@Value(value = "${jwt.access-token-expiration-time-millis}")
 	private Long accessTokenExpirationTimeMillis;
 
+	@Value(value = "${jwt.refresh-token-expiration-time-millis}")
 	private Long refreshTokenExpirationTimeMillis;
 
     @Override

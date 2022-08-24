@@ -13,11 +13,9 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @PropertySource(value = "classpath:mail.properties", encoding = "UTF-8")
 public class EmailConfig {
 
-    @Value("${mail.username}")
-    private String username;
+    private String username = System.getenv("MAIL_USERNAME");
 
-    @Value("${mail.password}")
-    private String password;
+    private String password = System.getenv("MAIL_PASSWORD");
 
     @Value("${host}")
     private String host;

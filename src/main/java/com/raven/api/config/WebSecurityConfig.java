@@ -7,7 +7,6 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,11 +23,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.raven.api.mapper.UserMapper;
 import com.raven.api.security.jwt.AuthEntryPoint;
 import com.raven.api.security.jwt.AuthenticationTokenFilter;
 import com.raven.api.security.jwt.AuthorizationTokenFilter;
-import com.raven.api.service.UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -38,29 +35,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
 
-    private final UserService userService;
-
-    private final UserMapper userMapper;
-
     private final PasswordEncoder passwordEncoder;
-
-    private final MessageSourceAccessor accessor;
 
     private final AuthEntryPoint authEntryPoint;
 
     private final AuthorizationTokenFilter authorizationTokenFilter;
-
-    @Value(value = "${jwt.secret}")
-	private String secret;
-
-	@Value(value = "${jwt.claim}")
-	private String claim;
-
-	@Value(value = "${jwt.access-token-expiration-time-millis}")
-	private Long accessTokenExpirationTimeMillis;
-
-	@Value(value = "${jwt.refresh-token-expiration-time-millis}")
-	private Long refreshTokenExpirationTimeMillis;
 
     @Value(value = "${frontend.origin}")
 	private String frontendOrigin;
@@ -82,15 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests().antMatchers("/tag/**").permitAll().and()
             .authorizeRequests().antMatchers("/post/**").permitAll()
             .anyRequest().authenticated();
-        http.addFilter(new AuthenticationTokenFilter(
-            authenticationManagerBean(),
-            this.userService,
-            this.userMapper,
-            this.accessor,
-            this.secret, 
-            this.claim, 
-            this.accessTokenExpirationTimeMillis, 
-            this.refreshTokenExpirationTimeMillis));
+        http.addFilter(this.authenticationTokenFilter());
         http.addFilterBefore(this.authorizationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
@@ -101,8 +72,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    AuthenticationTokenFilter authenticationTokenFilter() throws Exception {
+        AuthenticationTokenFilter authenticationTokenFilter = new AuthenticationTokenFilter();
+        authenticationTokenFilter.setAuthenticationManager(authenticationManagerBean());
+        return authenticationTokenFilter;
+    }
 
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.setAllowedOrigins(Arrays.asList(frontendOrigin));

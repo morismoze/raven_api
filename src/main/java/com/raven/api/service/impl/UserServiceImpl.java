@@ -78,12 +78,6 @@ public class UserServiceImpl implements UserService {
     @Value(value = "${content.type.plaintext}")
 	private String mailContentType;
 
-    @Value(value = "${mail.username}")
-	private String mailUsername;
-
-    @Value(value = "${mail.password}")
-	private String mailPassword;
-
     @Value(value = "${mail.activation-message.subject}")
 	private String mailActivationMessageSubject;
 
