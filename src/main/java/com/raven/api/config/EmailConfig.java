@@ -21,7 +21,10 @@ public class EmailConfig {
     private String host;
 
     @Value("${port}")
-    private Integer port;
+    private int port;
+
+    @Value("${mail.smtp.ssl.protocols}")
+    private String mailSmtpSslProtocols;
 
     @Value("${mail.transport.protocol}")
     private String mailTransportProtocol;
@@ -40,12 +43,12 @@ public class EmailConfig {
 		final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
 		mailSender.setHost(this.host);
-		mailSender.setPort(587);
+		mailSender.setPort(this.port);
 		mailSender.setUsername(this.username);
 		mailSender.setPassword(this.password);
 
 		final Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+        props.put("mail.smtp.ssl.protocols", mailSmtpSslProtocols);
         props.put("mail.transport.protocol", mailTransportProtocol);
         props.put("mail.smtp.auth", mailSmtpAuth);
         props.put("mail.smtp.starttls.enable", mailSmtpStarttlsEnable);
