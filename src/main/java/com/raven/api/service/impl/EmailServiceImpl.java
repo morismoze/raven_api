@@ -30,13 +30,15 @@ public class EmailServiceImpl implements EmailService {
 
     private final MessageSourceAccessor accessor;
 
+    private String username = System.getenv("MAIL_USERNAME");
+
     @Override
     public void sendMessage(String to, String subject, String content, String contentType) {
         final MimeMessage message = emailSender.createMimeMessage();
         try {
             message.setContent(content, contentType);
             message.setRecipients(Message.RecipientType.TO, to);
-            message.setFrom("raven.project@outlook.com");
+            message.setFrom(username);
             message.setSubject(subject);
         } catch (MessagingException messagingException) {
             // do nothing for now
