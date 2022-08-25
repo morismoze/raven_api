@@ -3,8 +3,10 @@ package com.raven.api.service.impl;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.context.support.MessageSourceAccessor;
@@ -34,6 +36,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             message.setContent(content, contentType);
             message.setRecipients(Message.RecipientType.TO, to);
+            message.setFrom("raven.project@outlook.com");
             message.setSubject(subject);
         } catch (MessagingException messagingException) {
             // do nothing for now

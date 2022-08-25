@@ -39,6 +39,7 @@ import com.raven.api.service.UserService;
 
 public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFilter {
 
+	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
