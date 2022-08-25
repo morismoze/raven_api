@@ -21,4 +21,4 @@ spring:
       max-request-size: 10MB
 
 frontend:
-  origin: https://raven-ui.netlify.app
+  origin: https://raven-ui.netlify.app/
