@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
         verificationTokenRepository.save(verificationToken);
 
         this.emailService.sendMessage(savedUser.getEmail(), this.mailActivationMessageSubject, 
-        this.mailActivationMessageBody + "\n" + this.frontendOrigin + "activate?uuid=" + uuid, this.mailContentType);
+        this.mailActivationMessageBody + "\n" + this.frontendOrigin + "/activate?uuid=" + uuid, this.mailContentType);
 
         return savedUser;
     }
