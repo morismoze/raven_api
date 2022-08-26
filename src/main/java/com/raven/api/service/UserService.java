@@ -11,7 +11,13 @@ public interface UserService {
 
     User createUser(User user, RoleName roleName);
 
+    void resendActivationEmail(Long userId);
+
     void activate(String uuid);
+
+    void sendPasswordResetEmail(String email);
+
+    void resetPassword(String uuid, String password);
 
     Role findRole(RoleName roleName);
 

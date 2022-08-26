@@ -15,10 +15,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "verification_token")
+@Table(name = "password_reset_token")
 @Getter
 @Setter
-public class VerificationToken {
+public class PasswordResetToken {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,12 +37,12 @@ public class VerificationToken {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    public VerificationToken() {
+    public PasswordResetToken() {
     }
 
-    public VerificationToken(final Long id, 
-                             final User user, 
-                             final String uuidCode) {
+    public PasswordResetToken(final Long id, 
+                              final User user, 
+                              final String uuidCode) {
         this.id = id;
         this.user = user;
         this.uuidCode = uuidCode;

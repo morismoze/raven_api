@@ -39,6 +39,9 @@ public class User {
     @OneToOne(mappedBy = "user")
     private VerificationToken verificationToken;
 
+    @OneToOne(mappedBy = "user")
+    private PasswordResetToken passwordResetToken;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -83,6 +86,7 @@ public class User {
                 final String password, 
                 final String username, 
                 final VerificationToken verificationToken,
+                final PasswordResetToken passwordResetToken,
                 final List<Role> roles, 
                 final List<Post> posts, 
                 final List<PostView> postViews, 
@@ -101,6 +105,7 @@ public class User {
         this.password = password;
         this.username = username;
         this.verificationToken = verificationToken;
+        this.passwordResetToken = passwordResetToken;
         this.roles = List.copyOf(roles);
         this.posts = List.copyOf(posts);
         this.postViews = List.copyOf(postViews);
@@ -124,6 +129,7 @@ public class User {
             ", password='" + getPassword() + "'" +
             ", username='" + getUsername() + "'" +
             ", verificationToken='" + getVerificationToken() + "'" +
+            ", passwordResetToken='" + getPasswordResetToken() + "'" +
             ", roles='" + getRoles() + "'" +
             ", posts='" + getPosts() + "'" +
             ", postViews='" + getPostViews() + "'" +

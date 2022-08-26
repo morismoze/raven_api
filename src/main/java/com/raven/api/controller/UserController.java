@@ -20,6 +20,8 @@ import com.raven.api.validation.UserRequestDtoValidator;
 import com.raven.api.mapper.UserMapper;
 import com.raven.api.model.User;
 import com.raven.api.model.enums.RoleName;
+import com.raven.api.request.PasswordResetEmailRequestDto;
+import com.raven.api.request.PasswordResetRequestDto;
 import com.raven.api.request.UserRequestDto;
 import com.raven.api.response.Response;
 import com.raven.api.response.UserResponseDto;
@@ -65,9 +67,27 @@ public class UserController {
         return ResponseEntity.created(uri).body(Response.build(userResponseDto));
     }
 
+    @PutMapping("/create/resend")
+    public ResponseEntity<Response<?>> resendActivationEmail(@RequestParam Long id) {
+        this.userService.resendActivationEmail(id);
+        return ResponseEntity.ok().body(Response.build(null, false));
+    }
+
     @PutMapping("/activate")
     public ResponseEntity<Response<?>> activate(@RequestParam final String uuid) {
         this.userService.activate(uuid);
+        return ResponseEntity.ok(Response.build(null, false));
+    }
+    
+    @PostMapping("password/reset")
+    public ResponseEntity<Response<?>> sendPasswordResetEmail(@RequestBody final PasswordResetEmailRequestDto passwordResetEmailRequestDto) {
+        this.userService.sendPasswordResetEmail(passwordResetEmailRequestDto.getEmail());
+        return ResponseEntity.ok(Response.build(null, false));
+    }
+
+    @PutMapping("password/reset")
+    public ResponseEntity<Response<?>> resetPassword(@RequestParam final String uuid, @RequestBody final PasswordResetRequestDto passwordResetRequestDto) {
+        this.userService.resetPassword(uuid, passwordResetRequestDto.getPassword());
         return ResponseEntity.ok(Response.build(null, false));
     }
 

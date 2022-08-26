@@ -8,6 +8,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.raven.api.exception.EntryNotFoundException;
 import com.raven.api.exception.ServerErrorException;
 import com.raven.api.exception.UnauthorizedException;
+import com.raven.api.model.PasswordResetToken;
 import com.raven.api.model.Post;
 import com.raven.api.model.PostComment;
 import com.raven.api.model.PostCommentDownvote;
@@ -19,6 +20,7 @@ import com.raven.api.model.Role;
 import com.raven.api.model.User;
 import com.raven.api.model.VerificationToken;
 import com.raven.api.model.enums.RoleName;
+import com.raven.api.repository.PasswordResetTokenRepository;
 import com.raven.api.repository.RoleRepository;
 import com.raven.api.repository.UserRepository;
 import com.raven.api.repository.VerificationTokenRepository;
@@ -58,6 +60,8 @@ public class UserServiceImpl implements UserService {
 
     private final VerificationTokenRepository verificationTokenRepository;
 
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+
     private final EmailService emailService;
     
     private final MessageSourceAccessor accessor;
@@ -81,8 +85,8 @@ public class UserServiceImpl implements UserService {
     @Value(value = "${mail.activation-message.subject}")
 	private String mailActivationMessageSubject;
 
-    @Value(value = "${mail.activation-message.body}")
-	private String mailActivationMessageBody;
+    @Value(value = "${mail.reset-password.subject}")
+	private String mailResetPasswordSubject;
 
     @Value(value = "${frontend.origin}")
 	private String frontendOrigin;
@@ -115,18 +119,25 @@ public class UserServiceImpl implements UserService {
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         User savedUser = this.userRepository.save(user);
 
-        final String uuid = UUID.randomUUID().toString();
-        final VerificationToken verificationToken = new VerificationToken();
-        verificationToken.setUser(savedUser);
-        verificationToken.setUuidCode(uuid);
-        verificationToken.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        verificationToken.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-        verificationTokenRepository.save(verificationToken);
-
-        this.emailService.sendMessage(savedUser.getEmail(), this.mailActivationMessageSubject, 
-        this.mailActivationMessageBody + "\n" + this.frontendOrigin + "/activate?uuid=" + uuid, this.mailContentType);
+        this.sendActivationEmail(user);
 
         return savedUser;
+    }
+
+    @Override
+    public void resendActivationEmail(Long userId) {
+        User user = this.findById(userId);
+
+        if (user.isActivated()) {
+            throw new ServerErrorException(this.accessor.getMessage("user.verified"));
+        }
+
+        final Optional<VerificationToken> verificationTokenOptional = this.verificationTokenRepository.findByUser_Id(userId);
+        if (verificationTokenOptional.isPresent()) {
+            this.verificationTokenRepository.delete(verificationTokenOptional.get());
+        }
+
+        sendActivationEmail(user);
     }
 
     @Override
@@ -143,6 +154,27 @@ public class UserServiceImpl implements UserService {
         this.userRepository.save(user);
 
         this.verificationTokenRepository.delete(verificationTokenOptional.get());
+    }
+
+    @Override
+    public void sendPasswordResetEmail(String email) {
+        User user = this.findByEmail(email);
+
+        this.sendPasswordResetEmail(user);
+    }
+
+    @Override
+    public void resetPassword(String uuid, String password) {
+        final Optional<PasswordResetToken> passwordResetTokenOptional = this.passwordResetTokenRepository.findByUuidCode(uuid);
+        if (passwordResetTokenOptional.isEmpty()) {
+            throw new EntryNotFoundException(this.accessor.getMessage("passwordResetTokenOptional.notFound"));
+        }
+
+        final User user = passwordResetTokenOptional.get().getUser();
+        user.setPassword(passwordEncoder.encode(password));
+        this.userRepository.save(user);
+
+        this.passwordResetTokenRepository.delete(passwordResetTokenOptional.get());
     }
 
     @Override
@@ -259,6 +291,36 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new UnauthorizedException(this.accessor.getMessage("user.missingToken"));
         }        
+    }
+
+    private void sendActivationEmail(User user) {
+        final String uuid = UUID.randomUUID().toString();
+        final VerificationToken verificationToken = new VerificationToken();
+
+        verificationToken.setUser(user);
+        verificationToken.setUuidCode(uuid);
+        verificationToken.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        verificationToken.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        this.verificationTokenRepository.save(verificationToken);
+
+        String message = this.accessor.getMessage("mail.activation-message.body", new Object[]{user.getFirstName()});
+        this.emailService.sendMessage(user.getEmail(), this.mailActivationMessageSubject, 
+            message + "\n" + this.frontendOrigin + "/activate?uuid=" + uuid, this.mailContentType);
+    }
+
+    private void sendPasswordResetEmail(User user) {
+        final String uuid = UUID.randomUUID().toString();
+        final PasswordResetToken passwordResetToken = new PasswordResetToken();
+
+        passwordResetToken.setUser(user);
+        passwordResetToken.setUuidCode(uuid);
+        passwordResetToken.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        passwordResetToken.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        this.passwordResetTokenRepository.save(passwordResetToken);
+
+        String message = this.accessor.getMessage("mail.reset-password.body", new Object[]{user.getFirstName()});
+        this.emailService.sendMessage(user.getEmail(), this.mailResetPasswordSubject, 
+            message + "\n" + this.frontendOrigin + "/reset-password?uuid=" + uuid, this.mailContentType);
     }
 
 }
