@@ -41,7 +41,9 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -79,14 +81,20 @@ public class UserServiceImpl implements UserService {
     @Value(value = "${jwt.access-token-expiration-time-millis}")
 	private Long accessTokenExpirationTimeMillis;
 
-    @Value(value = "${content.type.plaintext}")
-	private String mailContentType;
+    @Value(value = "${content.type.html}")
+	private String htmlMailContentType;
 
-    @Value(value = "${mail.activation-message.subject}")
-	private String mailActivationMessageSubject;
+    @Value(value = "${mail.activation.subject}")
+	private String mailActivationSubject;
 
     @Value(value = "${mail.reset-password.subject}")
 	private String mailResetPasswordSubject;
+
+    @Value(value = "${mail.activation.link-path}")
+	private String mailActivationLinkPath;
+
+    @Value(value = "${mail.reset-password.link-path}")
+	private String mailResetPasswordLinkPath;
 
     @Value(value = "${frontend.origin}")
 	private String frontendOrigin;
@@ -157,10 +165,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sendPasswordResetEmail(String email) {
+    public User sendPasswordResetEmail(String email) {
         User user = this.findByEmail(email);
 
         this.sendPasswordResetEmail(user);
+
+        return user;
     }
 
     @Override
@@ -303,9 +313,12 @@ public class UserServiceImpl implements UserService {
         verificationToken.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         this.verificationTokenRepository.save(verificationToken);
 
-        String message = this.accessor.getMessage("mail.activation-message.body", new Object[]{user.getFirstName()});
-        this.emailService.sendMessage(user.getEmail(), this.mailActivationMessageSubject, 
-            message + "\n" + this.frontendOrigin + "/activate?uuid=" + uuid, this.mailContentType);
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("firstName", user.getFirstName());
+        variables.put("activationLink", this.frontendOrigin + this.mailActivationLinkPath + uuid);
+        String message = this.emailService.generateHtmlString("account-activation", variables);
+        
+        this.emailService.sendMessage(user.getEmail(), this.mailActivationSubject, message, this.htmlMailContentType);
     }
 
     private void sendPasswordResetEmail(User user) {
@@ -318,9 +331,13 @@ public class UserServiceImpl implements UserService {
         passwordResetToken.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         this.passwordResetTokenRepository.save(passwordResetToken);
 
-        String message = this.accessor.getMessage("mail.reset-password.body", new Object[]{user.getFirstName()});
-        this.emailService.sendMessage(user.getEmail(), this.mailResetPasswordSubject, 
-            message + "\n" + this.frontendOrigin + "/reset-password?uuid=" + uuid, this.mailContentType);
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("firstName", user.getFirstName());
+        System.out.println(this.frontendOrigin + this.mailResetPasswordLinkPath + uuid);
+        variables.put("passwordResetLink", this.frontendOrigin + this.mailResetPasswordLinkPath + uuid);
+        String message = this.emailService.generateHtmlString("password-reset", variables);
+
+        this.emailService.sendMessage(user.getEmail(), this.mailResetPasswordSubject, message, this.htmlMailContentType);
     }
 
 }

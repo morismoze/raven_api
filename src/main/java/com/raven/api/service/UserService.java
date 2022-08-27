@@ -15,7 +15,7 @@ public interface UserService {
 
     void activate(String uuid);
 
-    void sendPasswordResetEmail(String email);
+    User sendPasswordResetEmail(String email);
 
     void resetPassword(String uuid, String password);
 

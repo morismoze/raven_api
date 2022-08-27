@@ -81,8 +81,9 @@ public class UserController {
     
     @PostMapping("password/reset")
     public ResponseEntity<Response<?>> sendPasswordResetEmail(@RequestBody final PasswordResetEmailRequestDto passwordResetEmailRequestDto) {
-        this.userService.sendPasswordResetEmail(passwordResetEmailRequestDto.getEmail());
-        return ResponseEntity.ok(Response.build(null, false));
+        User user = this.userService.sendPasswordResetEmail(passwordResetEmailRequestDto.getEmail());
+        final UserResponseDto userResponseDto = this.userMapper.userUserResponseDtoMapper(user);
+        return ResponseEntity.ok(Response.build(userResponseDto));
     }
 
     @PutMapping("password/reset")

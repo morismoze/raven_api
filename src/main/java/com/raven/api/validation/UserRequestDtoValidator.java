@@ -52,7 +52,6 @@ public class UserRequestDtoValidator implements Validator {
         checkUsername(user, errors);
     }
     
-    
     private void checkEmail(final UserRequestDto user, final Errors errors) {
         ValidationUtils.rejectIfEmpty(errors, EMAIL, accessor.getMessage("user.email.empty"));
 

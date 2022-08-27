@@ -1,6 +1,6 @@
 package com.raven.api.request;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString
 public class PasswordResetEmailRequestDto {
 
-    @NotNull
+    @NotBlank
     private String email;
 
 }
