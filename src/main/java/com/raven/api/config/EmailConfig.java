@@ -44,8 +44,8 @@ public class EmailConfig {
 
 		mailSender.setHost(this.host);
 		mailSender.setPort(587);
-		mailSender.setUsername("raven.project@outlook.com");
-		mailSender.setPassword("Powerade1997");
+		mailSender.setUsername(this.username);
+		mailSender.setPassword(this.password);
 
 		final Properties props = mailSender.getJavaMailProperties();
         props.put("mail.smtp.ssl.protocols", mailSmtpSslProtocols);

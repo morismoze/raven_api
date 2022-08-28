@@ -96,7 +96,11 @@ public class PostServiceImpl implements PostService {
         final Sort sort = Sort.by("createdAt").descending();
         final Pageable pageable = PageRequest.of(page, limit, sort);
         
-        return this.postRepository.findAllByTags_TagName(TagName.valueOf(tagName), pageable);
+        try {
+            return this.postRepository.findAllByTags_TagName(TagName.valueOf(tagName), pageable);
+        } catch (IllegalArgumentException e) {
+            throw new EntryNotFoundException(this.accessor.getMessage("tagPosts.notFound", new Object[]{tagName}));
+        }
     }
 
     @Override
