@@ -1,6 +1,6 @@
 package com.raven.api.request;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
@@ -16,23 +16,23 @@ import lombok.ToString;
 @ToString
 public class UserRequestDto {
     
-    @NotNull
+    @NotBlank
     @Size(max = 30)
     private String firstName;
 
-    @NotNull
+    @NotBlank
     @Size(max = 30)
     private String lastName;
 
-    @NotNull
+    @NotBlank
     @Size(max = 255)
     private String email;
 
-    @NotNull
+    @NotBlank
     @Size(max = 255)
     private String username;
 
-    @NotNull
+    @NotBlank
     @Size(max = 60)
     private String password;
 

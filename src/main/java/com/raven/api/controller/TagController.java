@@ -29,10 +29,10 @@ public class TagController {
 
     @GetMapping("/all")
     public ResponseEntity<Response<?>> getAllTags() {
-            final List<Tag> tags = this.tagService.findAll();
-            final List<TagResponseDto> tagsResponseDto = this.tagMapper.tagsTagsResponseDtoMapper(tags, this.postService);
+        final List<Tag> tags = this.tagService.findAll();
+        final List<TagResponseDto> tagsResponseDto = this.tagMapper.tagsTagsResponseDtoMapper(tags, this.postService);
 
-            return ResponseEntity.ok().body(Response.build(tagsResponseDto));
+        return ResponseEntity.ok().body(Response.build(tagsResponseDto));
     }
     
 }

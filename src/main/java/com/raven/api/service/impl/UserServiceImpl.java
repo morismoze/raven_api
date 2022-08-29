@@ -167,7 +167,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User sendPasswordResetEmail(String email) {
         User user = this.findByEmail(email);
-
         this.sendPasswordResetEmail(user);
 
         return user;
@@ -208,6 +207,7 @@ public class UserServiceImpl implements UserService {
         }
         
         user.getRoles().add(roleOptional.get());
+        this.userRepository.save(user);
 
         return user;
     }
@@ -333,7 +333,6 @@ public class UserServiceImpl implements UserService {
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("firstName", user.getFirstName());
-        System.out.println(this.frontendOrigin + this.mailResetPasswordLinkPath + uuid);
         variables.put("passwordResetLink", this.frontendOrigin + this.mailResetPasswordLinkPath + uuid);
         String message = this.emailService.generateHtmlString("password-reset", variables);
 

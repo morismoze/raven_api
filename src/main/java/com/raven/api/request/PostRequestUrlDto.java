@@ -2,6 +2,8 @@ package com.raven.api.request;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -20,21 +22,21 @@ import lombok.ToString;
 @ToString
 public class PostRequestUrlDto {
     
-    @NotNull
+    @NotBlank
     @Size(max = 255)
     private String title;
 
-    @NotNull
+    @NotBlank
     @Size(max = 2200)
     private String description;
 
-    @NotNull
+    @NotBlank
     private String url;
 
-    @NotNull
+    @NotEmpty
     private List<Tag> tags;
 
     @NotNull
-    private boolean mature;
+    private Boolean mature;
 
 }

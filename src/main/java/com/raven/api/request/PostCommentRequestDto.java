@@ -1,6 +1,6 @@
 package com.raven.api.request;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString
 public class PostCommentRequestDto {
     
-    @NotNull
+    @NotBlank
     @Size(max = 2200)
     private String comment;
 

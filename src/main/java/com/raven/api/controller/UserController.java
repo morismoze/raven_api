@@ -4,6 +4,8 @@ import java.net.URI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -44,7 +46,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity<Response<?>> getUser(@PathVariable final Long id) {
+    public ResponseEntity<Response<?>> getUser(@PathVariable @NotNull final Long id) {
         final User user = this.userService.findById(id);
         final UserResponseDto userResponseDto = this.userMapper.userUserResponseDtoMapper(user);
 
@@ -68,13 +70,13 @@ public class UserController {
     }
 
     @PutMapping("/create/resend")
-    public ResponseEntity<Response<?>> resendActivationEmail(@RequestParam Long id) {
+    public ResponseEntity<Response<?>> resendActivationEmail(@RequestParam @NotNull final Long id) {
         this.userService.resendActivationEmail(id);
         return ResponseEntity.ok().body(Response.build(null, false));
     }
 
     @PutMapping("/activate")
-    public ResponseEntity<Response<?>> activate(@RequestParam final String uuid) {
+    public ResponseEntity<Response<?>> activate(@RequestParam @NotBlank final String uuid) {
         this.userService.activate(uuid);
         return ResponseEntity.ok(Response.build(null, false));
     }
@@ -87,7 +89,8 @@ public class UserController {
     }
 
     @PutMapping("password/reset")
-    public ResponseEntity<Response<?>> resetPassword(@RequestParam final String uuid, @RequestBody final PasswordResetRequestDto passwordResetRequestDto) {
+    public ResponseEntity<Response<?>> resetPassword(@RequestParam @NotBlank final String uuid, 
+        @RequestBody final PasswordResetRequestDto passwordResetRequestDto) {
         this.userService.resetPassword(uuid, passwordResetRequestDto.getPassword());
         return ResponseEntity.ok(Response.build(null, false));
     }

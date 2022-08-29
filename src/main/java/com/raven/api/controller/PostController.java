@@ -3,6 +3,9 @@ package com.raven.api.controller;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -95,7 +98,8 @@ public class PostController {
     }
 
     @GetMapping(value = "/all", params = { "page", "limit" })
-    public ResponseEntity<Response<?>> getAllPosts(final @RequestParam Integer page, final @RequestParam Integer limit) {
+    public ResponseEntity<Response<?>> getAllPosts(final @RequestParam @NotNull Integer page, 
+        final @RequestParam @NotNull Integer limit) {
         final Page<Post> posts = this.postService.findPageablePosts(page, limit);
         final Integer nextPage = posts.hasNext() ? posts.getPageable().getPageNumber() + 1 : null;
         final PostsResponseDto postResponseDto = this.postMapper.postsPostsResponseDtoMapper(posts.getTotalElements(),
@@ -105,8 +109,8 @@ public class PostController {
     }
 
     @GetMapping(value = "/all", params = { "tagName", "page", "limit" })
-    public ResponseEntity<Response<?>> findAllPostsByTagName(final @RequestParam String tagName, final @RequestParam Integer page, 
-        final @RequestParam Integer limit) {
+    public ResponseEntity<Response<?>> findAllPostsByTagName(final @RequestParam @NotBlank String tagName, 
+        final @RequestParam @NotNull Integer page, final @RequestParam @NotNull Integer limit) {
         final Page<Post> posts = this.postService.findPageablePostsByTagName(tagName, page, limit);
         final Integer nextPage = posts.hasNext() ? posts.getPageable().getPageNumber() + 1 : null;
         final PostsResponseDto postResponseDto = this.postMapper.postsPostsResponseDtoMapper(posts.getTotalElements(),
@@ -124,7 +128,7 @@ public class PostController {
     }
 
     @GetMapping("/{webId}")
-    public ResponseEntity<Response<?>> getPost(final @PathVariable String webId) {
+    public ResponseEntity<Response<?>> getPost(final @PathVariable @NotBlank String webId) {
         final Post post = this.postService.findByWebId(webId);
         final PostResponseDto postResponseDto = this.postMapper.postPostResponseDtoMapper(post);
 
@@ -134,7 +138,7 @@ public class PostController {
 
     @PostMapping("/{webId}/upvote")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity<Response<?>> upvotePost(final @PathVariable String webId) {
+    public ResponseEntity<Response<?>> upvotePost(final @PathVariable @NotBlank String webId) {
         final User currentUser = this.userService.findCurrent();
         final Integer votes = this.postService.upvotePost(webId, currentUser);
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "/upvote").toUriString());
@@ -144,7 +148,7 @@ public class PostController {
 
     @PostMapping("/{webId}/downvote")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity<Response<?>> downvotePost(final @PathVariable String webId) {
+    public ResponseEntity<Response<?>> downvotePost(final @PathVariable @NotBlank String webId) {
         final User currentUser = this.userService.findCurrent();
         final Integer votes = this.postService.downvotePost(webId, currentUser);
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "/downvote").toUriString());
@@ -153,8 +157,8 @@ public class PostController {
     }
 
     @GetMapping("/{webId}/comments")
-    public ResponseEntity<Response<?>> getPostComments(final @PathVariable String webId, final @RequestParam Integer page, 
-        final @RequestParam Integer limit) {
+    public ResponseEntity<Response<?>> getPostComments(final @PathVariable @NotBlank String webId, 
+        final @RequestParam @NotNull Integer page, final @RequestParam @NotNull Integer limit) {
         final Post post = this.postService.findByWebId(webId);
         final Page<PostComment> postComments = this.postCommentService.findPageablePostComments(post, page, limit);
         final Integer nextPage = postComments.hasNext() ? postComments.getPageable().getPageNumber() + 1 : null;
@@ -166,7 +170,7 @@ public class PostController {
 
     @PostMapping("/{webId}/comments/create")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity<Response<?>> createPostComment(final @PathVariable String webId, 
+    public ResponseEntity<Response<?>> createPostComment(final @PathVariable @NotBlank String webId, 
         final @RequestBody PostCommentRequestDto postCommentRequestDto, final BindingResult errors) {
         this.postCommentRequestDtoValidator.validate(postCommentRequestDto, errors);
         if (errors.hasErrors()) {
@@ -183,7 +187,8 @@ public class PostController {
 
     @PostMapping("/{webId}/comments/{id}/upvote")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity<Response<?>> upvotePostComment(final @PathVariable String webId, final @PathVariable Long id) {
+    public ResponseEntity<Response<?>> upvotePostComment(final @PathVariable @NotBlank String webId, 
+        final @PathVariable @NotNull Long id) {
         final User currentUser = this.userService.findCurrent();
         final Integer votes = this.postCommentService.upvotePostComment(id, currentUser);
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "comments/" + id + "/upvote").toUriString());
@@ -193,7 +198,8 @@ public class PostController {
 
     @PostMapping("/{webId}/comments/{id}/downvote")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity<Response<?>> downvotePostComment(final @PathVariable String webId, final @PathVariable Long id) {
+    public ResponseEntity<Response<?>> downvotePostComment(final @PathVariable @NotBlank String webId, 
+        final @PathVariable @NotNull Long id) {
         final User currentUser = this.userService.findCurrent();
         final Integer votes = this.postCommentService.downvotePostComment(id, currentUser);
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "comments/" + id + "/downvote").toUriString());

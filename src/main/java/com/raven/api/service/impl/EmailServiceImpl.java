@@ -1,15 +1,12 @@
 package com.raven.api.service.impl;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.context.support.MessageSourceAccessor;
@@ -62,7 +59,6 @@ public class EmailServiceImpl implements EmailService {
             try {
                 emailSender.send(message);
             } catch (Exception exception) {
-                System.out.print(this.emailSender.toString());
                 exception.printStackTrace();
                 throw new ServerErrorException(this.accessor.getMessage("mail.error"));
             }

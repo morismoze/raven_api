@@ -1,6 +1,7 @@
 package com.raven.api.request;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +16,8 @@ import lombok.ToString;
 @ToString
 public class PasswordResetRequestDto {
 
-    @NotNull
+    @NotBlank
+    @Size(max = 60)
     private String password;
 
 }

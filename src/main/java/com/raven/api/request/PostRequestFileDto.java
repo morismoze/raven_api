@@ -1,5 +1,6 @@
 package com.raven.api.request;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -18,21 +19,21 @@ import lombok.ToString;
 @ToString
 public class PostRequestFileDto {
     
-    @NotNull
+    @NotBlank
     @Size(max = 255)
     private String title;
 
-    @NotNull
+    @NotBlank
     @Size(max = 2200)
     private String description;
 
     @NotNull
     private MultipartFile file;
 
-    @NotNull
+    @NotBlank
     private String tags;
 
     @NotNull
-    private boolean mature;
+    private Boolean mature;
 
 }
