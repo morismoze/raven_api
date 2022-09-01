@@ -45,12 +45,8 @@ public class PostRequestFileDtoValidator implements Validator {
         
         final PostRequestFileDto postRequestFileDto = (PostRequestFileDto) target;
 
-        try {
-            if (!CoverUtils.isImage(postRequestFileDto.getFile().getBytes())) {
-                errors.rejectValue(FILE, this.accessor.getMessage("post.cover.notValid"));
-            }
-        } catch (IOException e) {
-            throw new ServerErrorException(this.accessor.getMessage("server.error"));
+        if (!CoverUtils.isImage(postRequestFileDto.getFile().getContentType())) {
+            errors.rejectValue(FILE, this.accessor.getMessage("post.cover.notValid"));
         }
     }
     

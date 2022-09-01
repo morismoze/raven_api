@@ -4,11 +4,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 public class CoverUtils {
-
-    private static final Base64.Decoder decoder = Base64.getDecoder();
 
     public static byte[] stringToBytes(final String from) {
         if (from == null) {
@@ -18,13 +15,12 @@ public class CoverUtils {
         }
     }
 
-    public static boolean isImage(final byte[] bytes) {
-        try {
-            decoder.decode(bytes);
-            return true;
-        } catch (IllegalArgumentException iae) {
-            return false;
+    public static boolean isImage(final String contentType) {
+        if (contentType.startsWith("image/")) {
+            return true; 
         }
+
+        return false;
     }
 
     public static boolean isValidUrl(final String coverUrl) {
