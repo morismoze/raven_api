@@ -17,6 +17,8 @@ public interface UserService {
 
     User sendPasswordResetEmail(String email);
 
+    void resendPasswordResetEmail(Long userId);
+
     void resetPassword(String uuid, String password);
 
     Role findRole(RoleName roleName);

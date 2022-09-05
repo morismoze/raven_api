@@ -173,6 +173,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void resendPasswordResetEmail(Long userId) {
+        User user = this.findById(userId);
+
+        final Optional<PasswordResetToken> passwordResetTokenOptional = this.passwordResetTokenRepository.findByUser_Id(userId);
+        if (passwordResetTokenOptional.isPresent()) {
+            this.passwordResetTokenRepository.delete(passwordResetTokenOptional.get());
+        }
+
+        sendPasswordResetEmail(user);
+    }
+
+    @Override
     public void resetPassword(String uuid, String password) {
         final Optional<PasswordResetToken> passwordResetTokenOptional = this.passwordResetTokenRepository.findByUuidCode(uuid);
         if (passwordResetTokenOptional.isEmpty()) {

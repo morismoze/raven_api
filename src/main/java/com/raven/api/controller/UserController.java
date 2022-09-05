@@ -81,14 +81,20 @@ public class UserController {
         return ResponseEntity.ok(Response.build(null, false));
     }
     
-    @PostMapping("password/reset")
+    @PostMapping("/password/reset")
     public ResponseEntity<Response<?>> sendPasswordResetEmail(@RequestBody final PasswordResetEmailRequestDto passwordResetEmailRequestDto) {
         User user = this.userService.sendPasswordResetEmail(passwordResetEmailRequestDto.getEmail());
         final UserResponseDto userResponseDto = this.userMapper.userUserResponseDtoMapper(user);
         return ResponseEntity.ok(Response.build(userResponseDto));
     }
 
-    @PutMapping("password/reset")
+    @PutMapping("/password/reset/resend")
+    public ResponseEntity<Response<?>> resendPasswordResetEmail(@RequestParam @NotNull final Long id) {
+        this.userService.resendPasswordResetEmail(id);
+        return ResponseEntity.ok().body(Response.build(null, false));
+    }
+
+    @PutMapping("/password/reset")
     public ResponseEntity<Response<?>> resetPassword(@RequestParam @NotBlank final String uuid, 
         @RequestBody final PasswordResetRequestDto passwordResetRequestDto) {
         this.userService.resetPassword(uuid, passwordResetRequestDto.getPassword());

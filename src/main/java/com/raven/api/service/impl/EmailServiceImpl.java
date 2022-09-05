@@ -39,9 +39,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public String generateHtmlString(String templateName, Map<String, Object> variables) {
-        String output = this.templateEngine.process(templateName, new Context(Locale.getDefault(), variables));
-
-        return output;
+        return this.templateEngine.process(templateName, new Context(Locale.getDefault(), variables));
     }
 
     @Override
@@ -50,7 +48,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             message.setContent(content, contentType);
             message.setRecipients(Message.RecipientType.TO, to);
-            message.setFrom(this.username);
+            message.setFrom("raven.project@outlook.com");
             message.setSubject(subject);
         } catch (MessagingException messagingException) {
             // do nothing for now
