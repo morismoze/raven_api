@@ -48,7 +48,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             message.setContent(content, contentType);
             message.setRecipients(Message.RecipientType.TO, to);
-            message.setFrom("raven.project@outlook.com");
+            message.setFrom(this.username);
             message.setSubject(subject);
         } catch (MessagingException messagingException) {
             // do nothing for now
