@@ -29,6 +29,7 @@ ext {
 	cloudinaryVersion = "1.0.2"
 	springMailVersion = "1.2.0.RELEASE"
 	thymeleafVersion = "2.7.3"
+	blurhashVersion = "1.0.0"
 }
 
 dependencies {
@@ -45,6 +46,7 @@ dependencies {
 	implementation "com.cloudinary:cloudinary:${cloudinaryVersion}"
 	implementation "org.springframework.boot:spring-boot-starter-mail:${springMailVersion}"
 	implementation "org.springframework.boot:spring-boot-starter-thymeleaf:${thymeleafVersion}"
+	implementation "io.trbl:blurhash:${blurhashVersion}"
 	developmentOnly "org.springframework.boot:spring-boot-devtools"
 	runtimeOnly "org.postgresql:postgresql"
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"

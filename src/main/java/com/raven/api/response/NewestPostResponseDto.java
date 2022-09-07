@@ -23,6 +23,12 @@ public class NewestPostResponseDto {
 
     private String coverUrl;
 
+    private String coverBlurHash;
+
+    private int coverWidth;
+
+    private int coverHeight;
+
     private Timestamp createdAt;
 
     private Timestamp updatedAt;

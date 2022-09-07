@@ -28,6 +28,15 @@ public class Cover {
     @Column(nullable = false, name = "url")
     private String url;
 
+    @Column(nullable = false, name = "blurhash")
+    private String blurHash;
+
+    @Column(nullable = false, name = "width")
+    private int width;
+
+    @Column(nullable = false, name = "height")
+    private int height;
+
     @OneToOne
     @JoinColumn(name = "post_id")
     private Post post;
@@ -43,11 +52,17 @@ public class Cover {
 
     public Cover(final Long id, 
                  final String url, 
+                 final String blurhash, 
+                 final int width,
+                 final int height,
                  final Post post, 
                  final Timestamp createdAt, 
                  final Timestamp updatedAt) {
         this.id = id;
         this.url = url;
+        this.blurHash = blurhash;
+        this.width = width;
+        this.height = height;
         this.post = post;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -58,6 +73,7 @@ public class Cover {
         return "{" +
             " id='" + getId() + "'" +
             ", url='" + getUrl() + "'" +
+            ", blurhash='" + getBlurHash() + "'" +
             ", post='" + getPost() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +

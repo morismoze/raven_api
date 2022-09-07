@@ -40,6 +40,9 @@ public interface PostMapper {
     }
 
     @Mapping(source = "cover.url", target = "coverUrl")
+    @Mapping(source = "cover.blurHash", target = "coverBlurHash")
+    @Mapping(source = "cover.width", target = "coverWidth")
+    @Mapping(source = "cover.height", target = "coverHeight")
     @Mapping(source = ".", target = "votes", qualifiedByName = "postVotesMapper")
     @Mapping(source = "postComments", target = "comments", qualifiedByName = "postCommentsQuantityMapper")
     @Mapping(source = "postViews", target = "views", qualifiedByName = "postViewsMapper")
@@ -116,6 +119,9 @@ public interface PostMapper {
     }
 
     @Mapping(source = "cover.url", target = "coverUrl")
+    @Mapping(source = "cover.blurHash", target = "coverBlurHash")
+    @Mapping(source = "cover.width", target = "coverWidth")
+    @Mapping(source = "cover.height", target = "coverHeight")
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "user.username", target = "username")
     @Mapping(source = "postUpvotes", target = "userPrincipalUpvoted", qualifiedByName = "postUpvotedByUserPrincipalMapper")
@@ -127,6 +133,9 @@ public interface PostMapper {
     PostResponseDto postPostResponseDtoMapper(Post post);
     
     @Mapping(source = "cover.url", target = "coverUrl")
+    @Mapping(source = "cover.blurHash", target = "coverBlurHash")
+    @Mapping(source = "cover.width", target = "coverWidth")
+    @Mapping(source = "cover.height", target = "coverHeight")
     NewestPostResponseDto postNewestPostResponseDtoMapper(Post post);
 
     List<NewestPostResponseDto> postsNewestPostsResponseDtoMapper(List<Post> posts);

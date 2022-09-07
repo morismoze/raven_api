@@ -26,6 +26,7 @@ import com.raven.api.mapper.PostMapper;
 import com.raven.api.model.Post;
 import com.raven.api.model.PostComment;
 import com.raven.api.model.User;
+import com.raven.api.request.PostCommentReportRequestDto;
 import com.raven.api.request.PostCommentRequestDto;
 import com.raven.api.request.PostRequestFileDto;
 import com.raven.api.request.PostRequestUrlDto;
@@ -200,6 +201,17 @@ public class PostController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<Response<?>> downvotePostComment(final @PathVariable @NotBlank String webId, 
         final @PathVariable @NotNull Long id) {
+        final User currentUser = this.userService.findCurrent();
+        final Integer votes = this.postCommentService.downvotePostComment(id, currentUser);
+        final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "comments/" + id + "/downvote").toUriString());
+        
+        return ResponseEntity.created(uri).body(Response.build(votes));
+    }
+
+    @PostMapping("/{webId}/comments/{id}/report")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<Response<?>> reportPostComment(final @PathVariable @NotBlank String webId, 
+        final @PathVariable @NotNull Long id, @RequestBody PostCommentReportRequestDto postCommentReportRequestDto) {
         final User currentUser = this.userService.findCurrent();
         final Integer votes = this.postCommentService.downvotePostComment(id, currentUser);
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "comments/" + id + "/downvote").toUriString());

@@ -59,6 +59,7 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
         "/user/password/reset",
         "/user/password/reset/resend",
         "/tag/all",
+        "/post-comment-report-reason/all",
         "/post/all",
         "/post/newest"
     };

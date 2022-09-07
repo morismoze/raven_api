@@ -19,7 +19,7 @@ public class PostCommentResponseDto {
 
     private String comment;
 
-    private String userId;
+    private Long userId;
 
     private String username;
 

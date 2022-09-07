@@ -36,7 +36,6 @@ public class EmailServiceImpl implements EmailService {
 
     private static final int NO_OF_QUICK_SERVICE_THREADS = 20;
 
-
     @Override
     public String generateHtmlString(String templateName, Map<String, Object> variables) {
         return this.templateEngine.process(templateName, new Context(Locale.getDefault(), variables));

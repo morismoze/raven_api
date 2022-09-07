@@ -21,6 +21,12 @@ public class ReducedPostResponseDto {
 
     private String coverUrl;
 
+    private String coverBlurHash;
+
+    private int coverWidth;
+
+    private int coverHeight;
+
     private Integer votes;
 
     private Integer comments;

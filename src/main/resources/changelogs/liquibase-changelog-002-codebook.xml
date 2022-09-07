@@ -201,4 +201,27 @@
         </update>
     </changeSet>
 
+    <changeSet id="20220907-00" author="mmoze">
+        <insert tableName="post_comment_report_reason">
+            <column name="id">1</column>
+            <column name="reason_value">Suggestive, unsettling, contains mature themes</column>
+        </insert>
+        <insert tableName="post_comment_report_reason">
+            <column name="id">2</column>
+            <column name="reason_value">Nudity, sexual activity, non-consensual sexualization</column>
+        </insert>
+        <insert tableName="post_comment_report_reason">
+            <column name="id">3</column>
+            <column name="reason_value">Spam, fake news, scams, fraud</column>
+        </insert>
+        <insert tableName="post_comment_report_reason">
+            <column name="id">4</column>
+            <column name="reason_value">Discrimination, hateful ideology, illegal content, gore</column>
+        </insert>
+        <insert tableName="post_comment_report_reason">
+            <column name="id">5</column>
+            <column name="reason_value">Harassment, self-harm, personal information</column>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

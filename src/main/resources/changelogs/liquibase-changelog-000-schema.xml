@@ -434,4 +434,76 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="20220906-00" author="mmoze">
+        <addColumn tableName="cover">
+            <column name="blurhash" type="VARCHAR(30)"/>
+        </addColumn>
+        <addColumn tableName="cover">
+            <column name="width" type="INTEGER"/>
+        </addColumn>
+        <addColumn tableName="cover">
+            <column name="height" type="INTEGER"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20220906-01" author="mmoze">
+        <modifyDataType 
+            tableName="cover"
+            columnName="blurhash"
+            newDataType="VARCHAR(128)"/>
+    </changeSet>
+
+    <changeSet id="20220907-00" author="mmoze">
+        <createTable tableName="post_comment_report_reason">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_post_comment_report_reason_id"/>
+            </column>
+            <column name="reason_value" type="VARCHAR(255)">
+                <constraints unique="true" uniqueConstraintName="reason_value_uniq" nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="post_comment_report">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_post_comment_report_id"/>
+            </column>
+            <column name="post_comment_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_comment_report_post_comment_id" references="post_comment(id)"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_comment_report_user_id" references="user(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20220907-01" author="mmoze">
+        <addColumn tableName="post_comment_report_reason">
+            <column name="post_comment_report_reason" type="BIGINT">
+                <constraints foreignKeyName="fk_post_comment_report_reason_post_comment_report_id" references="post_comment_report(id)"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20220907-02" author="mmoze">
+        <addColumn tableName="post_comment_report">
+            <column name="post_comment_report_reason_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_comment_report_post_comment_report_reason_id" references="post_comment_report_reason(id)"/>
+            </column>
+        </addColumn>
+        <dropColumn columnName="post_comment_report_reason" tableName="post_comment_report_reason"/>
+    </changeSet>
+
+    <changeSet id="20220907-03" author="mmoze">
+        <addColumn tableName="post_comment_report">
+            <column name="description" type="VARCHAR(2200)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

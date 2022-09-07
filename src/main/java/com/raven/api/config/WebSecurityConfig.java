@@ -59,6 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests().antMatchers("/user/**", "/login", "/logout").permitAll().and()
             .authorizeRequests().antMatchers("/tag/**").permitAll().and()
+            .authorizeRequests().antMatchers("/post-comment-report-reason/**").permitAll().and()
             .authorizeRequests().antMatchers("/post/**").permitAll()
             .anyRequest().authenticated();
         http.addFilter(this.authenticationTokenFilter());
@@ -85,8 +86,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowedOrigins(Arrays.asList(frontendOrigin));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("X-Requested-With","Origin","Content-Type","Accept","Authorization"));
-        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
-                "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers", "access_token", "refresh_token", "error"));
+        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin", "Authorization",
+            "access_token", "refresh_token", "error"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

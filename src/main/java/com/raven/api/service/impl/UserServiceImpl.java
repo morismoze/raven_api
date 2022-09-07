@@ -127,6 +127,7 @@ public class UserServiceImpl implements UserService {
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         User savedUser = this.userRepository.save(user);
 
+        this.checkVerificationToken(user.getId());
         this.sendActivationEmail(user);
 
         return savedUser;
@@ -135,16 +136,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void resendActivationEmail(Long userId) {
         User user = this.findById(userId);
-
+        
         if (user.isActivated()) {
             throw new ServerErrorException(this.accessor.getMessage("user.verified"));
         }
 
-        final Optional<VerificationToken> verificationTokenOptional = this.verificationTokenRepository.findByUser_Id(userId);
-        if (verificationTokenOptional.isPresent()) {
-            this.verificationTokenRepository.delete(verificationTokenOptional.get());
-        }
-
+        this.checkVerificationToken(userId);
         sendActivationEmail(user);
     }
 
@@ -167,6 +164,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User sendPasswordResetEmail(String email) {
         User user = this.findByEmail(email);
+        this.checkPasswordResetToken(user.getId());
         this.sendPasswordResetEmail(user);
 
         return user;
@@ -175,13 +173,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void resendPasswordResetEmail(Long userId) {
         User user = this.findById(userId);
-
-        final Optional<PasswordResetToken> passwordResetTokenOptional = this.passwordResetTokenRepository.findByUser_Id(userId);
-        if (passwordResetTokenOptional.isPresent()) {
-            this.passwordResetTokenRepository.delete(passwordResetTokenOptional.get());
-        }
-
-        sendPasswordResetEmail(user);
+        this.checkPasswordResetToken(userId);
+        this.sendPasswordResetEmail(user);
     }
 
     @Override
@@ -349,6 +342,22 @@ public class UserServiceImpl implements UserService {
         String message = this.emailService.generateHtmlString("password-reset", variables);
 
         this.emailService.sendMessage(user.getEmail(), this.mailResetPasswordSubject, message, this.htmlMailContentType);
+    }
+
+    
+
+    private void checkVerificationToken(Long userId) {
+        final Optional<VerificationToken> verificationTokenOptional = this.verificationTokenRepository.findByUser_Id(userId);
+        if (verificationTokenOptional.isPresent()) {
+            this.verificationTokenRepository.delete(verificationTokenOptional.get());
+        }
+    }
+
+    private void checkPasswordResetToken(Long userId) {
+        final Optional<PasswordResetToken> passwordResetTokenOptional = this.passwordResetTokenRepository.findByUser_Id(userId);
+        if (passwordResetTokenOptional.isPresent()) {
+            this.passwordResetTokenRepository.delete(passwordResetTokenOptional.get());
+        }
     }
 
 }

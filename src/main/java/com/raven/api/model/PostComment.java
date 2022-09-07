@@ -1,7 +1,6 @@
 package com.raven.api.model;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -46,6 +45,9 @@ public class PostComment {
     @OneToMany(mappedBy = "postComment", orphanRemoval = true)
     private Set<PostCommentDownvote> postCommentDownvotes;
 
+    @OneToMany(mappedBy = "postComment", orphanRemoval = true)
+    private Set<PostCommentReport> postCommentReports;
+
     @Column(name = "created_at")
     private Timestamp createdAt;
 
@@ -61,6 +63,7 @@ public class PostComment {
                        final User user, 
                        final Set<PostCommentUpvote> postCommentUpvotes,
                        final Set<PostCommentDownvote> postCommentDownvotes,
+                       final Set<PostCommentReport> postCommentReports,
                        final Timestamp createdAt, 
                        final Timestamp updatedAt) {
         this.id = id;
@@ -69,6 +72,7 @@ public class PostComment {
         this.user = user;
         this.postCommentUpvotes = Set.copyOf(postCommentUpvotes);
         this.postCommentDownvotes = Set.copyOf(postCommentDownvotes);
+        this.postCommentReports = postCommentReports;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -82,11 +86,11 @@ public class PostComment {
             ", user='" + getUser() + "'" +
             ", postCommentUpvotes='" + getPostCommentUpvotes() + "'" +
             ", postCommentDownvotes='" + getPostCommentDownvotes() + "'" +
+            ", postCommentReports='" + getPostCommentReports() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
             "}";
     }
-
 
     @Override
     public boolean equals(Object o) {

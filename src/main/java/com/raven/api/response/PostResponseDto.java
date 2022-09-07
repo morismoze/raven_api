@@ -26,7 +26,13 @@ public class PostResponseDto {
 
     private String coverUrl;
 
-    private String userId;
+    private String coverBlurHash;
+
+    private int coverWidth;
+
+    private int coverHeight;
+
+    private Long userId;
 
     private String username;
 
