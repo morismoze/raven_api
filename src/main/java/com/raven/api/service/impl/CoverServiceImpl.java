@@ -16,7 +16,7 @@ import com.raven.api.service.CoverService;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.net.URL;
 
 import io.trbl.blurhash.BlurHash;
@@ -35,8 +35,10 @@ public class CoverServiceImpl implements CoverService {
     public Cover createCover(final Post post, final String coverUrl) {
         final Cover cover = new Cover();
         try {
-            BufferedImage image = ImageIO.read(new URL(coverUrl));
-            String blurHash = BlurHash.encode(image);
+            final InputStream inputStream = new URL(coverUrl).openStream();
+            final BufferedImage image = ImageIO.read(inputStream);
+            final String blurHash = BlurHash.encode(image);
+
             cover.setPost(post);
             cover.setUrl(coverUrl);
             cover.setBlurHash(blurHash);
@@ -46,8 +48,6 @@ public class CoverServiceImpl implements CoverService {
             cover.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
     
             return this.coverRepository.save(cover);
-        } catch (MalformedURLException e) {
-            throw new ServerErrorException(this.accessor.getMessage("server.error"));
         } catch (IOException e) {
             throw new ServerErrorException(this.accessor.getMessage("server.error"));
         }

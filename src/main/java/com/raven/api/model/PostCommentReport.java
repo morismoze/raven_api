@@ -46,5 +46,32 @@ public class PostCommentReport {
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
+
+
+    public PostCommentReport() {
+    }
+
+    public PostCommentReport(Long id, PostComment postComment, User user, PostCommentReportReason reason, String description, Timestamp createdAt, Timestamp updatedAt) {
+        this.id = id;
+        this.postComment = postComment;
+        this.user = user;
+        this.reason = reason;
+        this.description = description;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", postComment='" + getPostComment() + "'" +
+            ", user='" + getUser() + "'" +
+            ", reason='" + getReason() + "'" +
+            ", description='" + getDescription() + "'" +
+            ", createdAt='" + getCreatedAt() + "'" +
+            ", updatedAt='" + getUpdatedAt() + "'" +
+            "}";
+    }
     
 }

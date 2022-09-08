@@ -1,14 +1,11 @@
 package com.raven.api.validation;
 
-import java.io.IOException;
-
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.raven.api.exception.ServerErrorException;
 import com.raven.api.request.PostRequestFileDto;
 import com.raven.api.util.CoverUtils;
 

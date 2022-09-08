@@ -11,10 +11,12 @@ import com.raven.api.exception.EntryNotFoundException;
 import com.raven.api.model.Post;
 import com.raven.api.model.PostComment;
 import com.raven.api.model.PostCommentDownvote;
+import com.raven.api.model.PostCommentReportReason;
 import com.raven.api.model.PostCommentUpvote;
 import com.raven.api.model.User;
 import com.raven.api.repository.PostCommentRepository;
 import com.raven.api.service.PostCommentDownvoteService;
+import com.raven.api.service.PostCommentReportService;
 import com.raven.api.service.PostCommentService;
 import com.raven.api.service.PostCommentUpvoteService;
 
@@ -30,6 +32,8 @@ import lombok.RequiredArgsConstructor;
 public class PostCommentServiceImpl implements PostCommentService {
 
     private final PostCommentRepository postCommentRepository;
+
+    private final PostCommentReportService postCommentReportService;
 
     private final PostCommentUpvoteService postCommentUpvoteService;
 
@@ -123,6 +127,16 @@ public class PostCommentServiceImpl implements PostCommentService {
             this.postCommentDownvoteService.createPostCommentDownvote(postComment, user);
             return postComment.getPostCommentUpvotes().size() - postComment.getPostCommentDownvotes().size();
         }         
+    }
+
+    @Override
+    public void reportPostComment(User user, Long id, String description, PostCommentReportReason postCommentReportReason) {        
+        final Optional<PostComment> postCommentOptional = this.postCommentRepository.findById(id);
+        if (postCommentOptional.isEmpty()) {
+            throw new EntryNotFoundException(this.accessor.getMessage("postComment.notFound", new Object[]{id}));
+        }
+
+        this.postCommentReportService.createPostCommentReport(postCommentOptional.get(), user, description, postCommentReportReason);        
     }
     
 }

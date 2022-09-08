@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 
 import com.raven.api.model.Post;
 import com.raven.api.model.PostComment;
+import com.raven.api.model.PostCommentReportReason;
 import com.raven.api.model.User;
 
 public interface PostCommentService {
@@ -17,5 +18,7 @@ public interface PostCommentService {
     Integer downvotePostComment(Long id, User user);
 
     Page<PostComment> findPageablePostComments(Post post, Integer page, Integer limit);
+    
+    void reportPostComment(User user, Long id, String description, PostCommentReportReason postCommentReportReason);
 
 }

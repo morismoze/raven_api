@@ -38,6 +38,7 @@ import com.raven.api.response.Response;
 import com.raven.api.service.PostCommentService;
 import com.raven.api.service.PostService;
 import com.raven.api.service.UserService;
+import com.raven.api.validation.PostCommentReportReasonValidator;
 import com.raven.api.validation.PostCommentRequestDtoValidator;
 import com.raven.api.validation.PostRequestFileDtoValidator;
 import com.raven.api.validation.PostRequestUrlDtoValidator;
@@ -60,6 +61,8 @@ public class PostController {
     private final PostRequestFileDtoValidator postRequestFileDtoValidator;
 
     private final PostCommentRequestDtoValidator postCommentRequestDtoValidator;
+
+    private final PostCommentReportReasonValidator postCommentReportReasonValidator;
 
     private final PostMapper postMapper;
 
@@ -211,12 +214,16 @@ public class PostController {
     @PostMapping("/{webId}/comments/{id}/report")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<Response<?>> reportPostComment(final @PathVariable @NotBlank String webId, 
-        final @PathVariable @NotNull Long id, @RequestBody PostCommentReportRequestDto postCommentReportRequestDto) {
-        final User currentUser = this.userService.findCurrent();
-        final Integer votes = this.postCommentService.downvotePostComment(id, currentUser);
-        final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "comments/" + id + "/downvote").toUriString());
+        final @PathVariable @NotNull Long id, @RequestBody PostCommentReportRequestDto postCommentReportRequestDto, final BindingResult errors) {    
+        this.postCommentReportReasonValidator.validate(postCommentReportRequestDto, errors);
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(Response.build(errors));
+        }
         
-        return ResponseEntity.created(uri).body(Response.build(votes));
+        final User currentUser = this.userService.findCurrent();
+        this.postCommentService.reportPostComment(currentUser, id, postCommentReportRequestDto.getDescription(), postCommentReportRequestDto.getReason());
+        
+        return ResponseEntity.ok().body(Response.build("message", false));
     }
     
 }

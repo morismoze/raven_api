@@ -27,9 +27,7 @@ public class PostCommentReportReasonController {
     @GetMapping("/all")
     public ResponseEntity<Response<?>> getAllTags() {
         final List<PostCommentReportReason> postCommentReportReasons = this.postCommentReportReasonService.findAll();
-
-        final List<PostCommentReportReasonResponseDto> postCommentReportReasonsResponseDto = this.postCommentReportReasonMapper.tagsTagsResponseDtoMapper(postCommentReportReasons);
-
+        final List<PostCommentReportReasonResponseDto> postCommentReportReasonsResponseDto = this.postCommentReportReasonMapper.postCommentReportReasonsPostCommentReportReasonsResponseDtoMapper(postCommentReportReasons);
         return ResponseEntity.ok().body(Response.build(postCommentReportReasonsResponseDto));
     }
     

@@ -11,6 +11,6 @@ import com.raven.api.response.PostCommentReportReasonResponseDto;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PostCommentReportReasonMapper {
 
-    List<PostCommentReportReasonResponseDto> tagsTagsResponseDtoMapper(List<PostCommentReportReason> postCommentReportReasons);
+    List<PostCommentReportReasonResponseDto> postCommentReportReasonsPostCommentReportReasonsResponseDtoMapper(List<PostCommentReportReason> postCommentReportReasons);
     
 }
