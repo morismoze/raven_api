@@ -119,7 +119,6 @@ public class PostServiceImpl implements PostService {
         return postOptional.get();
     }
 
-
     @Override
     public Integer upvotePost(String webId, User user) {
         final Post post = this.findByWebId(webId);
