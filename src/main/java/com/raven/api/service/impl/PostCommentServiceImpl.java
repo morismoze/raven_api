@@ -138,5 +138,27 @@ public class PostCommentServiceImpl implements PostCommentService {
 
         this.postCommentReportService.createPostCommentReport(postCommentOptional.get(), user, description, postCommentReportReason);        
     }
+
+    @Override
+    public void editPostComment(Long id, String comment) {
+        Optional<PostComment> postCommentOptional = this.postCommentRepository.findById(id);    
+        if (postCommentOptional.isEmpty()) {
+            throw new EntryNotFoundException(this.accessor.getMessage("postComment.notFound", new Object[]{id}));
+        }
+        
+        PostComment postComment = postCommentOptional.get();
+        postComment.setComment(comment);
+        this.postCommentRepository.save(postComment);
+    }
+
+    @Override
+    public void deletePostComment(Long id) {
+        Optional<PostComment> postCommentOptional = this.postCommentRepository.findById(id);    
+        if (postCommentOptional.isEmpty()) {
+            throw new EntryNotFoundException(this.accessor.getMessage("postComment.notFound", new Object[]{id}));
+        }
+        
+        this.postCommentRepository.deleteById(id);
+    }
     
 }

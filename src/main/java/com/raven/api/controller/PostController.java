@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -224,6 +225,30 @@ public class PostController {
         this.postCommentService.reportPostComment(currentUser, id, postCommentReportRequestDto.getDescription(), postCommentReportRequestDto.getReason());
         
         return ResponseEntity.ok().body(Response.build("message", false));
+    }
+
+    @PostMapping("/{webId}/comments/{id}/edit")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<Response<?>> editPostComment(final @PathVariable @NotBlank String webId, final @PathVariable @NotNull Long id,
+        final @RequestBody PostCommentRequestDto postCommentRequestDto, final BindingResult errors) {
+        this.postCommentRequestDtoValidator.validate(postCommentRequestDto, errors);
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(Response.build(errors));
+        }
+
+        this.postCommentService.editPostComment(id, postCommentRequestDto.getComment());
+        final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "comments/create").toUriString());
+        
+        return ResponseEntity.created(uri).build();
+    }
+
+    @DeleteMapping("/{webId}/comments/{id}/delete")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<Response<?>> deletePostComment(final @PathVariable @NotBlank String webId, final @PathVariable @NotNull Long id) {
+        this.postCommentService.deletePostComment(id);
+        final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/post/" + webId + "comments/create").toUriString());
+        
+        return ResponseEntity.created(uri).build();
     }
     
 }

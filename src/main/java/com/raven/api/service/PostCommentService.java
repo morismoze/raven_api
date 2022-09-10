@@ -21,4 +21,7 @@ public interface PostCommentService {
     
     void reportPostComment(User user, Long id, String description, PostCommentReportReason postCommentReportReason);
 
+    void editPostComment(Long id, String comment);
+
+    void deletePostComment(Long id);
 }
