@@ -153,13 +153,13 @@ public class PostServiceImpl implements PostService {
             // user downvoted already downvoted post, so remove the downvote
             this.postDownvoteService.deleteById(postdownvote.getId());
             return post.getPostUpvotes().size() - post.getPostDownvotes().size();
-        } catch (EntryNotFoundException entryNotFoundExceptionUpvote) {
-            // user hasn't upvoted the post, so create a new one
+        } catch (EntryNotFoundException entryNotFoundExceptionDownvote) {
+            // user hasn't downvote the post, so create a new one
             try {
                 PostUpvote postUpvote = this.postUpvoteService.findByPostIdAndUserId(post.getId(), user.getId());
                 // user prevously upvoted the post, so remove the upvote
                 this.postUpvoteService.deleteById(postUpvote.getId());
-            } catch (EntryNotFoundException entryNotFoundExceptionDownvote) {
+            } catch (EntryNotFoundException entryNotFoundExceptionUpvote) {
                 // user hasn't previously downvoted the post
             }
 
