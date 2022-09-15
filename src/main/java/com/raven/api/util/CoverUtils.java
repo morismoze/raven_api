@@ -16,11 +16,7 @@ public class CoverUtils {
     }
 
     public static boolean isImage(final String contentType) {
-        if (contentType.startsWith("image/")) {
-            return true; 
-        }
-
-        return false;
+        return contentType.matches("image/(jpeg|png|gif|apng|tiff)");
     }
 
     public static boolean isValidUrl(final String coverUrl) {
@@ -29,10 +25,7 @@ public class CoverUtils {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod("HEAD");
             http.connect();
-            if (!http.getContentType().startsWith("image/")) {
-                return false;
-            }
-            return true;
+            return http.getContentType().matches("image/(jpeg|png|gif|apng|tiff)");
         } catch (IOException e) {
             return false;
         }

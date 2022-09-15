@@ -37,6 +37,7 @@ public class CoverServiceImpl implements CoverService {
         try {
             final InputStream inputStream = new URL(coverUrl).openStream();
             final BufferedImage image = ImageIO.read(inputStream);
+            System.out.println(image);
             final String blurHash = BlurHash.encode(image);
 
             cover.setPost(post);
