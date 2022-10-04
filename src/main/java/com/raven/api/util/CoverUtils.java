@@ -16,7 +16,7 @@ public class CoverUtils {
     }
 
     public static boolean isImage(final String contentType) {
-        return contentType.matches("image/(jpeg|png|gif|apng|tiff)");
+        return contentType.matches("image/(jpeg|jpg|png|gif|apng|tiff)");
     }
 
     public static boolean isValidUrl(final String coverUrl) {
